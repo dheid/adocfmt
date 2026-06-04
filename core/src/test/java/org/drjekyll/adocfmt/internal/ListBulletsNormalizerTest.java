@@ -15,10 +15,10 @@
  */
 package org.drjekyll.adocfmt.internal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.drjekyll.adocfmt.AsciidocFormatterTestSupport;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ListBulletsNormalizerTest {
 

@@ -53,10 +53,16 @@ public class TitleCaseTransformer implements LineTransformer {
       if (i > 0) {
         sb.append(' ');
       }
-      boolean forceCapitalize = i == 0 || i == words.length - 1;
+      boolean forceCapitalize =
+          i == 0 || i == words.length - 1 || (i > 0 && endsWithSentencePunctuation(words[i - 1]));
       sb.append(capitalizeWordForTitle(words[i], forceCapitalize));
     }
     return sb.toString();
+  }
+
+  private static boolean endsWithSentencePunctuation(String word) {
+    char last = word.isEmpty() ? 0 : word.charAt(word.length() - 1);
+    return last == '.' || last == '!' || last == '?' || last == ';';
   }
 
   private static String capitalizeWordForTitle(String word, boolean forceCapitalize) {

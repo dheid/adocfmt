@@ -1,11 +1,10 @@
 package org.drjekyll.adocfmt.internal;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.drjekyll.adocfmt.internal.block.BlockDelimiter;
 import org.drjekyll.adocfmt.internal.block.BlockTracker;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class ListBulletsNormalizer implements Runnable {

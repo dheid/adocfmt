@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Preserve AsciiDoc hard line breaks: lines ending with ` +` are no longer merged by the one-sentence-per-line transformation.
+- Title case transformation now capitalizes the first word after a sentence-ending punctuation mark (`.`, `!`, `?`, `;`) within a heading or block title.
+- List bullet normalization no longer converts `-` bullets when the list contains a mix of `-` and `*` bullets.
 
 ## [0.1.1] - 2026-06-04
 

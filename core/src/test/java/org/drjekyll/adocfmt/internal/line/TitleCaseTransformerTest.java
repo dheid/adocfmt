@@ -124,6 +124,30 @@ class TitleCaseTransformerTest {
   }
 
   @Test
+  void capitalizeAfterSentence() {
+    assertThat(apply(".Asciidoctor usage example. The listing should contain 5 lines."))
+        .isEqualTo(".Asciidoctor Usage Example. The Listing Should Contain 5 Lines.\n");
+  }
+
+  @Test
+  void capitalizeAfterExclamationMark() {
+    assertThat(apply(".Asciidoctor usage example! The listing should contain 5 lines."))
+        .isEqualTo(".Asciidoctor Usage Example! The Listing Should Contain 5 Lines.\n");
+  }
+
+  @Test
+  void capitalizeAfterQuestionMark() {
+    assertThat(apply(".Is this working? The listing should contain 5 lines."))
+        .isEqualTo(".Is This Working? The Listing Should Contain 5 Lines.\n");
+  }
+
+  @Test
+  void capitalizeAfterSemicolon() {
+    assertThat(apply(".Is this working; The listing should contain 5 lines."))
+        .isEqualTo(".Is This Working; The Listing Should Contain 5 Lines.\n");
+  }
+
+  @Test
   void emptyWordFromTrailingSpaceSkipped() {
     // Block title with trailing space produces an empty last word — word.isEmpty() must return it
     // as-is
