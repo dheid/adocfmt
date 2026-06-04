@@ -55,7 +55,8 @@ public class BlockTracker {
    *     line does not match
    */
   public String tryClose(CharSequence line) {
-    if (delimChar != '\0' && line.length() >= 4 && isAllSameChar(line, delimChar)) {
+    int minLen = delimChar == '`' ? 3 : 4;
+    if (delimChar != '\0' && line.length() >= minLen && isAllSameChar(line, delimChar)) {
       String closed = String.valueOf(delimChar);
       delimChar = '\0';
       return closed;

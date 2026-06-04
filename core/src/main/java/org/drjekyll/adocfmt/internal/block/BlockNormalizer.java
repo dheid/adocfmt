@@ -39,11 +39,13 @@ public class BlockNormalizer implements Runnable {
       String line = lines.get(i);
       if (bt.isOpen()) {
         String closed = bt.tryClose(line);
-        if (closed != null) {
+        if (closed != null && !"`".equals(closed)) {
           lines.set(i, closed.repeat(4));
         }
       } else if (BlockDelimiter.isBlockDelimiter(line)) {
-        if (line.length() > 4) {
+        if (line.charAt(0) == '`') {
+          bt.open(line);
+        } else if (line.length() > 4) {
           String prev = i == 0 ? null : lines.get(i - 1);
           boolean notSetextUnderline =
               prev == null

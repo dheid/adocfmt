@@ -1,7 +1,7 @@
 my document title
 =================
 
-First sentence. Second sentence here.   
+First sentence. Second sentence here.
 
 == a section heading ==
 Without blank line after.
@@ -85,3 +85,35 @@ This sentence includes a footnote.footnote:[Short footnote text.]
 * [[[ref-1,1]]] Author. _Book Title_. Publisher, year.
 
 See <<ref-1>> for details.
+
+
+// TODO: Use ifdef to show output according to current backend
+.Output of Asciidoctor usage example
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Asciidoctor 0.1.4">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untitled</title>
+<link rel="stylesheet" href="./asciidoctor.css">
+</head>
+<body class="article">
+<div id="header">
+</div>
+<div id="content">
+<div class="paragraph">
+<p><strong>This</strong> is <a href="http://asciidoc.org">AsciiDoc</a>!</p>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2014-01-28 20:11:37 MST
+</div>
+</div>
+</body>
+</html>
+```
+
+=== Block Quotes and "`Smart`" Ones

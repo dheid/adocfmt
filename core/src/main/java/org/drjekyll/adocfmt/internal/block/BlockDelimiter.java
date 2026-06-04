@@ -21,11 +21,14 @@ public class BlockDelimiter {
    */
   public boolean isBlockDelimiter(CharSequence line) {
     int len = line.length();
-    if (len < 4) {
+    if (len < 3) {
       return false;
     }
     char c = line.charAt(0);
-    if (BLOCK_DELIMITER_CHARS.indexOf(c) < 0) {
+    if (c == '`') {
+      return len >= 3 && line.charAt(1) == '`' && line.charAt(2) == '`';
+    }
+    if (len < 4 || BLOCK_DELIMITER_CHARS.indexOf(c) < 0) {
       return false;
     }
     for (int i = 1; i < len; i++) {
