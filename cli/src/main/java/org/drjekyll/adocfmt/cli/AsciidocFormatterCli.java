@@ -17,11 +17,14 @@ package org.drjekyll.adocfmt.cli;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 import org.drjekyll.adocfmt.AsciidocFormatter;
 import org.drjekyll.adocfmt.AsciidocFormatterConfig;
 import org.drjekyll.adocfmt.UnsupportedLineEndingException;
@@ -43,7 +46,7 @@ import picocli.CommandLine.Parameters;
 @Command(
     name = "adocfmt",
     mixinStandardHelpOptions = true,
-    version = "0.1.2",
+    version = "0.2.0",
     description = "An opinionated AsciiDoc formatter.")
 public class AsciidocFormatterCli implements Callable<Integer> {
 
@@ -151,15 +154,19 @@ public class AsciidocFormatterCli implements Callable<Integer> {
       return handleStdin(config);
     }
 
+    List<Path> resolvedFiles;
+    try {
+      resolvedFiles = expandToFiles(files);
+    } catch (IOException e) {
+      System.err.println("Error expanding paths: " + e.getMessage());
+      return 2;
+    }
+
     boolean anyChanged = false;
-    for (Path file : files) {
+    for (Path file : resolvedFiles) {
       try {
         if (!Files.exists(file)) {
           System.err.println("File not found: " + file);
-          return 2;
-        }
-        if (Files.isDirectory(file)) {
-          System.err.println("Not a file: " + file);
           return 2;
         }
         if (!Files.isReadable(file)) {
@@ -170,7 +177,7 @@ public class AsciidocFormatterCli implements Callable<Integer> {
           System.err.println("Not writable: " + file);
           return 2;
         }
-        if (processFile(file, config)) {
+        if (processFile(file, config, resolvedFiles.size())) {
           anyChanged = true;
         }
       } catch (IOException | UnsupportedLineEndingException e) {
@@ -213,7 +220,7 @@ public class AsciidocFormatterCli implements Callable<Integer> {
     return 0;
   }
 
-  private boolean processFile(Path file, AsciidocFormatterConfig config)
+  private boolean processFile(Path file, AsciidocFormatterConfig config, int totalFiles)
       throws IOException, UnsupportedLineEndingException {
     byte[] original = Files.readAllBytes(file);
     byte[] formatted = new AsciidocFormatter(config).format(original);
@@ -227,7 +234,7 @@ public class AsciidocFormatterCli implements Callable<Integer> {
       } else if (check) {
         System.out.println("Would format " + file);
       } else {
-        if (files.size() == 1) {
+        if (totalFiles == 1) {
           System.out.write(formatted);
         } else {
           System.out.println("Would format " + file + " (use -w to write)");
@@ -235,5 +242,28 @@ public class AsciidocFormatterCli implements Callable<Integer> {
       }
     }
     return changed;
+  }
+
+  private List<Path> expandToFiles(List<Path> paths) throws IOException {
+    List<Path> result = new ArrayList<>();
+    for (Path path : paths) {
+      if (Files.isDirectory(path)) {
+        try (Stream<Path> stream = Files.walk(path)) {
+          stream
+              .filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
+              .filter(p -> hasAdocExtension(p.getFileName().toString()))
+              .sorted()
+              .forEach(result::add);
+        }
+      } else {
+        result.add(path);
+      }
+    }
+    return result;
+  }
+
+  private static boolean hasAdocExtension(String filename) {
+    String lower = filename.toLowerCase(Locale.ROOT);
+    return lower.endsWith(".adoc") || lower.endsWith(".asciidoc");
   }
 }

@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-06-04
+
+### Added
+
+- Directory arguments are now supported: passing a directory recurses the full tree and processes all `.adoc` and `.asciidoc` files (case-insensitive, `.asc` excluded). Symbolic link directories are not followed. Discovered files are processed in sorted order for reproducible output.
+- Explicitly passed file paths bypass extension filtering and are always processed regardless of their extension.
+
 ## [0.1.2] - 2026-06-04
 
 ### Fixed

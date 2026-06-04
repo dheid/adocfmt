@@ -186,9 +186,9 @@ class AsciidocFormatterCliTest {
   }
 
   @Test
-  void directoryInputReturnsExitCode2() throws Exception {
-    Path dir = Files.createDirectory(tempDir.resolve("subdir"));
-    assertThat(execute(dir.toString())).isEqualTo(2);
+  void emptyDirectoryReturnsExitCode0() throws Exception {
+    Path dir = Files.createDirectory(tempDir.resolve("emptydir"));
+    assertThat(execute(dir.toString())).isEqualTo(0);
   }
 
   @Test
@@ -202,6 +202,89 @@ class AsciidocFormatterCliTest {
     Path missing = tempDir.resolve("missing.adoc");
     Path valid = writeFile("valid.adoc", FORMATTED);
     assertThat(execute(missing.toString(), valid.toString())).isEqualTo(2);
+  }
+
+  // -------------------------------------------------------------------------
+  // Directory traversal
+  // -------------------------------------------------------------------------
+
+  @Test
+  void writeDirectoryRecursesIntoSubdirectoriesAtMultipleDepths() throws Exception {
+    Path sub = Files.createDirectories(tempDir.resolve("sub"));
+    Path deep = Files.createDirectories(sub.resolve("deep"));
+    Path a = writeFile(sub, "a.adoc", UNFORMATTED);
+    Path b = writeFile(deep, "b.adoc", UNFORMATTED);
+    assertThat(execute("--write", tempDir.toString())).isEqualTo(0);
+    assertThat(Files.readString(a, StandardCharsets.UTF_8)).isEqualTo("== title\n");
+    assertThat(Files.readString(b, StandardCharsets.UTF_8)).isEqualTo("== title\n");
+  }
+
+  @Test
+  void checkDirectoryDetectsUnformattedFilesInSubdirectory() throws Exception {
+    Path sub = Files.createDirectories(tempDir.resolve("sub"));
+    writeFile(sub, "nested.adoc", UNFORMATTED);
+    assertThat(execute("--check", tempDir.toString())).isEqualTo(1);
+  }
+
+  @Test
+  void checkDirectoryProcessesAllFilesAndReportsBoth() throws Exception {
+    Path sub = Files.createDirectories(tempDir.resolve("sub"));
+    writeFile(sub, "a.adoc", UNFORMATTED);
+    writeFile(sub, "b.adoc", UNFORMATTED);
+    ByteArrayOutputStream captured = captureStdout(() -> execute("--check", tempDir.toString()));
+    String output = captured.toString(StandardCharsets.UTF_8);
+    assertThat(output).contains("a.adoc");
+    assertThat(output).contains("b.adoc");
+    assertThat(execute("--check", tempDir.toString())).isEqualTo(1);
+  }
+
+  @Test
+  void directoryRecursionExcludesAscExtension() throws Exception {
+    writeFile("matching.adoc", FORMATTED);
+    writeFile("also.asciidoc", FORMATTED);
+    writeFile("ignored.asc", UNFORMATTED);
+    assertThat(execute("--check", tempDir.toString())).isEqualTo(0);
+  }
+
+  @Test
+  void directoryRecursionIncludesAdocAndAsciidocExtensions() throws Exception {
+    Path a = writeFile("doc.adoc", UNFORMATTED);
+    Path b = writeFile("guide.asciidoc", UNFORMATTED);
+    assertThat(execute("--write", tempDir.toString())).isEqualTo(0);
+    assertThat(Files.readString(a, StandardCharsets.UTF_8)).isEqualTo("== title\n");
+    assertThat(Files.readString(b, StandardCharsets.UTF_8)).isEqualTo("== title\n");
+  }
+
+  @Test
+  void explicitAscFileIsProcessedRegardlessOfExtension() throws Exception {
+    Path file = writeFile("doc.asc", UNFORMATTED);
+    assertThat(execute("--write", file.toString())).isEqualTo(0);
+    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== title\n");
+  }
+
+  @Test
+  void explicitAscFileIsDetectedByCheckMode() throws Exception {
+    Path file = writeFile("doc.asc", UNFORMATTED);
+    assertThat(execute("--check", file.toString())).isEqualTo(1);
+  }
+
+  @Test
+  void mixedFileAndDirectoryArgumentsAreHandled() throws Exception {
+    Path dir = Files.createDirectories(tempDir.resolve("docs"));
+    Path inDir = writeFile(dir, "in.adoc", UNFORMATTED);
+    Path explicit = writeFile("explicit.adoc", UNFORMATTED);
+    assertThat(execute("--write", dir.toString(), explicit.toString())).isEqualTo(0);
+    assertThat(Files.readString(inDir, StandardCharsets.UTF_8)).isEqualTo("== title\n");
+    assertThat(Files.readString(explicit, StandardCharsets.UTF_8)).isEqualTo("== title\n");
+  }
+
+  @Test
+  void directoryFilesAreProcessedInSortedOrder() throws Exception {
+    writeFile("b.adoc", UNFORMATTED);
+    writeFile("a.adoc", UNFORMATTED);
+    ByteArrayOutputStream captured = captureStdout(() -> execute("--check", tempDir.toString()));
+    String output = captured.toString(StandardCharsets.UTF_8);
+    assertThat(output.indexOf("a.adoc")).isLessThan(output.indexOf("b.adoc"));
   }
 
   // -------------------------------------------------------------------------
@@ -264,6 +347,12 @@ class AsciidocFormatterCliTest {
 
   private Path writeFile(String name, String content) throws Exception {
     Path file = tempDir.resolve(name);
+    Files.writeString(file, content, StandardCharsets.UTF_8);
+    return file;
+  }
+
+  private Path writeFile(Path dir, String name, String content) throws Exception {
+    Path file = dir.resolve(name);
     Files.writeString(file, content, StandardCharsets.UTF_8);
     return file;
   }

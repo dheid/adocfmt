@@ -255,7 +255,7 @@ Requires Java 17+. Add the core module to your project:
 <dependency>
     <groupId>org.drjekyll</groupId>
     <artifactId>adocfmt</artifactId>
-    <version>0.1.2</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -387,7 +387,7 @@ Add the following to your `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/dheid/adocfmt
-    rev: v0.1.2
+    rev: v0.2.0
     hooks:
       - id: adocfmt        # formats .adoc/.asciidoc/.asc files in place
       - id: adocfmt-check  # CI mode: fails if any file would change
