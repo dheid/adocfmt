@@ -32,6 +32,26 @@ class HeadingBlankLinesEnsurerTest {
   }
 
   @Test
+  void blankLineAddedAfterSe2ndLevelHeading() {
+    assertThat(apply("Section\n-------\nContent")).isEqualTo("Section\n-------\n\nContent\n");
+  }
+
+  @Test
+  void blankLineAddedAfterSe3rdLevelHeading() {
+    assertThat(apply("Section\n~~~~~~~\nContent")).isEqualTo("Section\n~~~~~~~\n\nContent\n");
+  }
+
+  @Test
+  void blankLineAddedAfterSe4thLevelHeading() {
+    assertThat(apply("Section\n^^^^^^^\nContent")).isEqualTo("Section\n^^^^^^^\n\nContent\n");
+  }
+
+  @Test
+  void blankLineAddedAfterSe5thLevelHeading() {
+    assertThat(apply("Section\n+++++++\nContent")).isEqualTo("Section\n+++++++\n\nContent\n");
+  }
+
+  @Test
   void blankLineAddedBeforeHeading() {
     assertThat(apply("Content\n== Section")).isEqualTo("Content\n\n== Section\n");
   }
@@ -48,8 +68,13 @@ class HeadingBlankLinesEnsurerTest {
   }
 
   @Test
-  void noBlankLineBeforeFirstHeading() {
-    assertThat(apply("= Title\nContent")).isEqualTo("= Title\n\nContent\n");
+  void noBlankLineAddedAroundDocumentTitle() {
+    assertThat(apply("= Title\nContent")).isEqualTo("= Title\nContent\n");
+  }
+
+  @Test
+  void noBlankLineAddedAroundSetextDocumentTitle() {
+    assertThat(apply("Title\n=====\nContent")).isEqualTo("Title\n=====\nContent\n");
   }
 
   @Test

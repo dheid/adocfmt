@@ -20,12 +20,15 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.drjekyll.adocfmt.internal.block.BlockDelimiter;
 import org.drjekyll.adocfmt.internal.block.BlockTracker;
+import org.drjekyll.adocfmt.internal.setext.SetextUnderlineDetector;
 
 /**
- * Ensures that every ATX section heading is surrounded by exactly one blank line.
+ * Ensures that every section heading is surrounded by exactly one blank line.
  *
- * <p>A blank line is inserted before the heading when the preceding line is non-empty, and after
- * the heading when the following line is non-empty. Lines inside delimited blocks are left
+ * <p>Handles both ATX-style ({@code == Heading}) and setext-style ({@code Heading\n-------})
+ * headings. A blank line is inserted before the heading when the preceding line is non-empty, and
+ * after the heading when the following line is non-empty. The document title (ATX {@code = Title}
+ * or setext with {@code =====} underline) is left untouched. Lines inside delimited blocks are left
  * untouched.
  */
 @RequiredArgsConstructor
@@ -45,6 +48,24 @@ public class HeadingBlankLinesEnsurer implements Runnable {
         bt.tryClose(line);
         continue;
       }
+
+      if (i + 1 < lines.size()) {
+        Integer setextLevel = SetextUnderlineDetector.detectSetextUnderline(line, lines.get(i + 1));
+        if (setextLevel != null) {
+          boolean isDocumentTitle = setextLevel == 0;
+          if (!isDocumentTitle && !result.isEmpty() && !result.get(result.size() - 1).isEmpty()) {
+            result.add("");
+          }
+          result.add(line);
+          result.add(lines.get(i + 1));
+          if (!isDocumentTitle && i + 2 < lines.size() && !lines.get(i + 2).isEmpty()) {
+            result.add("");
+          }
+          i++;
+          continue;
+        }
+      }
+
       if (BlockDelimiter.isBlockDelimiter(line)) {
         result.add(line);
         bt.open(line);
@@ -52,11 +73,12 @@ public class HeadingBlankLinesEnsurer implements Runnable {
       }
 
       if (SectionHeadingMatcher.createSectionHeadingMatcher(line).matches()) {
-        if (!result.isEmpty() && !result.get(result.size() - 1).isEmpty()) {
+        boolean isDocumentTitle = result.isEmpty() && line.startsWith("= ");
+        if (!isDocumentTitle && !result.isEmpty() && !result.get(result.size() - 1).isEmpty()) {
           result.add("");
         }
         result.add(line);
-        if (i + 1 < lines.size() && !lines.get(i + 1).isEmpty()) {
+        if (!isDocumentTitle && i + 1 < lines.size() && !lines.get(i + 1).isEmpty()) {
           result.add("");
         }
       } else {
