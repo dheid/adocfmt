@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-ADOCFMT_VERSION="0.1.2"
+ADOCFMT_VERSION="0.2.0"
 ADOCFMT_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/adocfmt"
 ADOCFMT_CACHE_JAR="$ADOCFMT_CACHE_DIR/adocfmt-${ADOCFMT_VERSION}.jar"
 ADOCFMT_DOWNLOAD_URL="https://github.com/dheid/adocfmt/releases/download/v${ADOCFMT_VERSION}/adocfmt.jar"
