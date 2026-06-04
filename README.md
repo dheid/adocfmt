@@ -32,6 +32,7 @@ The following transformations are available (default state shown):
 - **Idempotent:** `format(format(x)) == format(x)`.
 - **Safe:** Delimited blocks (code, literal, passthrough), comments, and directives are never modified.
 - **Semantic:** Input and output render to identical normalised HTML (verified via AsciidoctorJ in tests).
+- **Trailing Newline:** Formatted output always ends with exactly one newline.
 
 ## Code Style
 
@@ -254,7 +255,7 @@ Requires Java 17+. Add the core module to your project:
 <dependency>
     <groupId>org.drjekyll</groupId>
     <artifactId>adocfmt</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 

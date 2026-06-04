@@ -28,17 +28,17 @@ class TrailingWhitespaceRemoverTest {
 
   @Test
   void trailingSpacesRemovedFromLine() {
-    assertThat(apply("line with trailing spaces   ")).isEqualTo("line with trailing spaces");
+    assertThat(apply("line with trailing spaces   ")).isEqualTo("line with trailing spaces\n");
   }
 
   @Test
   void trailingTabRemovedFromLine() {
-    assertThat(apply("line with tab\t")).isEqualTo("line with tab");
+    assertThat(apply("line with tab\t")).isEqualTo("line with tab\n");
   }
 
   @Test
   void lineWithoutTrailingWhitespaceUnchanged() {
-    String input = "clean line";
+    String input = "clean line\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
@@ -49,7 +49,7 @@ class TrailingWhitespaceRemoverTest {
 
   @Test
   void trailingWhitespaceRemovedFromMultipleLines() {
-    assertThat(apply("first  \nsecond\t\nthird   ")).isEqualTo("first\nsecond\nthird");
+    assertThat(apply("first  \nsecond\t\nthird   ")).isEqualTo("first\nsecond\nthird\n");
   }
 
   @Test
@@ -62,6 +62,6 @@ class TrailingWhitespaceRemoverTest {
 
   @Test
   void keepsLineEndings() {
-    assertThat(apply("line one\r\nline two")).isEqualTo("line one\r\nline two");
+    assertThat(apply("line one\r\nline two")).isEqualTo("line one\r\nline two\r\n");
   }
 }

@@ -52,7 +52,7 @@ body:
     attributes:
       label: Version
       description: Which version of `adocfmt` are you using?
-      placeholder: "e.g., 0.1.0"
+      placeholder: "e.g., 0.1.1"
     validations:
       required: true
   - type: textarea

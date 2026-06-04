@@ -18,11 +18,7 @@ package org.drjekyll.adocfmt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -71,7 +67,7 @@ class AsciidocFormatterTest {
             + "....\nliteral block\n....\n\n"
             + "++++\npassthrough block\n++++\n\n"
             + "////\ncomment block\n////\n\n"
-            + "[source,java]\n----\npublic void foo() {}\n----";
+            + "[source,java]\n----\npublic void foo() {}\n----\n";
     assertThat(new AsciidocFormatter(ALL_OPTIONS).format(input))
         .as("protected regions must not be altered")
         .isEqualTo(input);
@@ -95,7 +91,7 @@ class AsciidocFormatterTest {
     AsciidocFormatter formatter =
         new AsciidocFormatter(
             AsciidocFormatterConfig.builder().collapseConsecutiveBlankLines(true).build());
-    assertThat(formatter.format("line1\r\n\r\n\r\nline2")).isEqualTo("line1\r\n\r\nline2");
+    assertThat(formatter.format("line1\r\n\r\n\r\nline2")).isEqualTo("line1\r\n\r\nline2\r\n");
   }
 
   @Test
@@ -103,7 +99,7 @@ class AsciidocFormatterTest {
     AsciidocFormatter formatter =
         new AsciidocFormatter(
             AsciidocFormatterConfig.builder().collapseConsecutiveBlankLines(true).build());
-    assertThat(formatter.format("line1\r\r\rline2")).isEqualTo("line1\r\rline2");
+    assertThat(formatter.format("line1\r\r\rline2")).isEqualTo("line1\r\rline2\r");
   }
 
   @Test
@@ -111,7 +107,7 @@ class AsciidocFormatterTest {
     AsciidocFormatter formatter =
         new AsciidocFormatter(
             AsciidocFormatterConfig.builder().removeTrailingHeaderEqualsSign(true).build());
-    assertThat(formatter.format("== Title ==")).isEqualTo("== Title");
+    assertThat(formatter.format("== Title ==")).isEqualTo("== Title\n");
   }
 
   @Test
@@ -159,7 +155,7 @@ class AsciidocFormatterTest {
         new AsciidocFormatter(
             AsciidocFormatterConfig.builder().removeTrailingHeaderEqualsSign(true).build());
     assertThat(formatter.format((CharSequence) new StringBuilder("== Title ==")))
-        .isEqualTo("== Title");
+        .isEqualTo("== Title\n");
   }
 
   @Test
@@ -189,7 +185,7 @@ class AsciidocFormatterTest {
             AsciidocFormatterConfig.builder().removeTrailingHeaderEqualsSign(true).build());
     byte[] input = "== Title ==\n".getBytes(StandardCharsets.UTF_8);
     byte[] output = formatter.format(input);
-    assertThat(new String(output, StandardCharsets.UTF_8)).isEqualTo("== Title");
+    assertThat(new String(output, StandardCharsets.UTF_8)).isEqualTo("== Title\n");
   }
 
   @Test
@@ -201,7 +197,7 @@ class AsciidocFormatterTest {
     byte[] input = text.getBytes(StandardCharsets.UTF_8);
     byte[] output = formatter.format(input);
     assertThat(new String(output, StandardCharsets.UTF_8))
-        .isEqualTo("= Ünïcödé Héading\n\nContent with spëcial chars.");
+        .isEqualTo("= Ünïcödé Héading\n\nContent with spëcial chars.\n");
   }
 
   @Test
@@ -231,7 +227,7 @@ class AsciidocFormatterTest {
     byte[] input = "== Title ==\n".getBytes(StandardCharsets.UTF_8);
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     formatter.format(new ByteArrayInputStream(input), out);
-    assertThat(out.toString(StandardCharsets.UTF_8)).isEqualTo("== Title");
+    assertThat(out.toString(StandardCharsets.UTF_8)).isEqualTo("== Title\n");
   }
 
   @Test
@@ -242,7 +238,7 @@ class AsciidocFormatterTest {
     byte[] input = "line1\r\n\r\n\r\nline2".getBytes(StandardCharsets.UTF_8);
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     formatter.format(new ByteArrayInputStream(input), out);
-    assertThat(out.toString(StandardCharsets.UTF_8)).isEqualTo("line1\r\n\r\nline2");
+    assertThat(out.toString(StandardCharsets.UTF_8)).isEqualTo("line1\r\n\r\nline2\r\n");
   }
 
   @Test
@@ -305,6 +301,28 @@ class AsciidocFormatterTest {
         .isInstanceOf(NullPointerException.class);
   }
 
+  @Test
+  void reproductionOfTrailingNewlineIssue() throws UnsupportedLineEndingException {
+    AsciidocFormatterConfig config = AsciidocFormatterConfig.builder().build();
+    AsciidocFormatter formatter = new AsciidocFormatter(config);
+
+    String input = "line1\n";
+    String output = formatter.format(input);
+
+    assertThat(output).isEqualTo("line1\n");
+  }
+
+  @Test
+  void ensuresTrailingNewlineAddedIfMissing() throws UnsupportedLineEndingException {
+    AsciidocFormatterConfig config = AsciidocFormatterConfig.builder().build();
+    AsciidocFormatter formatter = new AsciidocFormatter(config);
+
+    String input = "line1";
+    String output = formatter.format(input);
+
+    assertThat(output).isEqualTo("line1\n");
+  }
+
   // -------------------------------------------------------------------------
   // Helpers
   // -------------------------------------------------------------------------
@@ -313,7 +331,7 @@ class AsciidocFormatterTest {
       throws IOException, URISyntaxException, UnsupportedLineEndingException {
     String before = readResource(beforeRes);
     String after = readResource(afterRes);
-    assertThat(new AsciidocFormatter(config).format(before)).isEqualTo(after.trim());
+    assertThat(new AsciidocFormatter(config).format(before)).isEqualTo(after);
   }
 
   private String readResource(String path) throws IOException, URISyntaxException {

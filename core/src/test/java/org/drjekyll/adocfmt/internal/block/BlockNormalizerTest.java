@@ -29,54 +29,54 @@ class BlockNormalizerTest {
 
   @Test
   void shortensLongDashDelimiter() {
-    assertThat(apply("--------\ncode\n--------")).isEqualTo("----\ncode\n----");
+    assertThat(apply("--------\ncode\n--------")).isEqualTo("----\ncode\n----\n");
   }
 
   @Test
   void shortensLongEqualsDelimiter() {
-    assertThat(apply("========\ncontent\n========")).isEqualTo("====\ncontent\n====");
+    assertThat(apply("========\ncontent\n========")).isEqualTo("====\ncontent\n====\n");
   }
 
   @Test
   void shortensLongDotDelimiter() {
-    assertThat(apply("........\nliteral\n........")).isEqualTo("....\nliteral\n....");
+    assertThat(apply("........\nliteral\n........")).isEqualTo("....\nliteral\n....\n");
   }
 
   @Test
   void shortensLongStarDelimiter() {
-    assertThat(apply("********\nsidebar\n********")).isEqualTo("****\nsidebar\n****");
+    assertThat(apply("********\nsidebar\n********")).isEqualTo("****\nsidebar\n****\n");
   }
 
   @Test
   void shortensLongUnderscoreDelimiter() {
-    assertThat(apply("________\nquote\n________")).isEqualTo("____\nquote\n____");
+    assertThat(apply("________\nquote\n________")).isEqualTo("____\nquote\n____\n");
   }
 
   @Test
   void shortensLongPlusDelimiter() {
-    assertThat(apply("++++++++\npass\n++++++++")).isEqualTo("++++\npass\n++++");
+    assertThat(apply("++++++++\npass\n++++++++")).isEqualTo("++++\npass\n++++\n");
   }
 
   @Test
   void shortensLongSlashDelimiter() {
-    assertThat(apply("////////\ncomment\n////////")).isEqualTo("////\ncomment\n////");
+    assertThat(apply("////////\ncomment\n////////")).isEqualTo("////\ncomment\n////\n");
   }
 
   @Test
   void leavesMinimalDelimiterUnchanged() {
-    String input = "----\ncode\n----";
+    String input = "----\ncode\n----\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void doesNotShortenSetextHeadingUnderline() {
-    String input = "Document Title\n==============";
+    String input = "Document Title\n==============\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void doesNotShortenTildeSetextUnderline() {
-    String input = "Subsection\n~~~~~~~~~~";
+    String input = "Subsection\n~~~~~~~~~~\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
@@ -91,7 +91,7 @@ class BlockNormalizerTest {
   @Test
   void doesNotShortenLongDelimiterThatIsSetextHeadingUnderline() {
     // "======" is >4 chars but follows a text line — it is a setext underline, not a block opener
-    String input = "Title\n======";
+    String input = "Title\n======\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
@@ -100,6 +100,6 @@ class BlockNormalizerTest {
     // prev is non-null and non-blank, but underline is shorter than the title so
     // detectSetextUnderline returns null → notSetextUnderline is true → shorten
     assertThat(apply("some text\n--------\ncode\n--------"))
-        .isEqualTo("some text\n----\ncode\n----");
+        .isEqualTo("some text\n----\ncode\n----\n");
   }
 }
