@@ -29,33 +29,33 @@ class TrailingHeaderEqualsSignRemoverTest {
 
   @Test
   void removesTrailingEqualsFromH2() {
-    assertThat(apply("== Section Title ==")).isEqualTo("== Section Title");
+    assertThat(apply("== Section Title ==")).isEqualTo("== Section Title\n");
   }
 
   @Test
   void removesTrailingEqualsFromH3() {
-    assertThat(apply("=== Subsection ===")).isEqualTo("=== Subsection");
+    assertThat(apply("=== Subsection ===")).isEqualTo("=== Subsection\n");
   }
 
   @Test
   void removesTrailingEqualsFromH4() {
-    assertThat(apply("==== Deep ==== Section ====")).isEqualTo("==== Deep ==== Section");
+    assertThat(apply("==== Deep ==== Section ====")).isEqualTo("==== Deep ==== Section\n");
   }
 
   @Test
   void removesTrailingEqualsWithTrailingSpaces() {
-    assertThat(apply("== Title ==   ")).isEqualTo("== Title");
+    assertThat(apply("== Title ==   ")).isEqualTo("== Title\n");
   }
 
   @Test
   void leavesAsymmetricHeadingUnchanged() {
-    String input = "== Already Asymmetric";
+    String input = "== Already Asymmetric\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void leavesNonHeadingLinesUnchanged() {
-    String input = "Normal paragraph with == signs == inside.";
+    String input = "Normal paragraph with == signs == inside.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
@@ -69,24 +69,24 @@ class TrailingHeaderEqualsSignRemoverTest {
 
   @Test
   void tabAfterHeadingMarkerNormalizedToSpace() {
-    assertThat(apply("===\tNginx")).isEqualTo("=== Nginx");
+    assertThat(apply("===\tNginx")).isEqualTo("=== Nginx\n");
   }
 
   @Test
   void multipleSpacesAfterHeadingMarkerCollapsed() {
-    assertThat(apply("==  Title")).isEqualTo("== Title");
+    assertThat(apply("==  Title")).isEqualTo("== Title\n");
   }
 
   @Test
   void symmetricAtxHeadingStillStrippedWhenBothEnabled() {
     String output =
         AsciidocFormatterTestSupport.apply(
-            "== Version ==",
+            "== Version ==\n",
             cfg -> {
               cfg.normalizeSetextHeadings(true);
               cfg.removeTrailingHeaderEqualsSign(true);
             });
-    assertThat(output).isEqualTo("== Version");
+    assertThat(output).isEqualTo("== Version\n");
   }
 
   @Test
@@ -98,6 +98,6 @@ class TrailingHeaderEqualsSignRemoverTest {
               cfg.removeTrailingWhitespace(true);
               cfg.removeTrailingHeaderEqualsSign(true);
             });
-    assertThat(output).isEqualTo("== Title\r\n\r\nBody.");
+    assertThat(output).isEqualTo("== Title\r\n\r\nBody.\r\n");
   }
 }

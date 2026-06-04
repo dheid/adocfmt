@@ -15,8 +15,9 @@
  */
 package org.drjekyll.adocfmt.cli;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import picocli.CommandLine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,18 +26,18 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class AsciidocFormatterCliTest {
 
   // Content that is already fully formatted (idempotent under all default options).
   // No trailing newline — the formatter strips trailing newlines via split(limit=0).
-  private static final String FORMATTED = "== Title";
+  private static final String FORMATTED = "== Title\n";
 
   // Content that needs the default --remove-trailing-header-equals transformation.
-  private static final String UNFORMATTED = "== title ==";
+  private static final String UNFORMATTED = "== title ==\n";
 
   @TempDir Path tempDir;
 
@@ -65,7 +66,7 @@ class AsciidocFormatterCliTest {
   @Test
   void checkMultipleFilesAllFormattedReturnsExitCode0() throws Exception {
     Path a = writeFile("a.adoc", FORMATTED);
-    Path b = writeFile("b.adoc", "== Section");
+    Path b = writeFile("b.adoc", "== Section\n");
     assertThat(execute("--check", a.toString(), b.toString())).isEqualTo(0);
   }
 
@@ -96,21 +97,21 @@ class AsciidocFormatterCliTest {
   void writeFormatsFileInPlace() throws Exception {
     Path file = writeFile("test.adoc", UNFORMATTED);
     assertThat(execute("--write", file.toString())).isEqualTo(0);
-    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== title");
+    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== title\n");
   }
 
   @Test
   void writeWithTitleCaseFormatsHeading() throws Exception {
     Path file = writeFile("test.adoc", "== title ==");
     assertThat(execute("--write", "--title-case", file.toString())).isEqualTo(0);
-    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== Title");
+    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== Title\n");
   }
 
   @Test
   void writeShortAliasWorks() throws Exception {
     Path file = writeFile("test.adoc", "== title ==");
     assertThat(execute("-w", "-tc", file.toString())).isEqualTo(0);
-    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== Title");
+    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== Title\n");
   }
 
   @Test
@@ -125,8 +126,8 @@ class AsciidocFormatterCliTest {
     Path a = writeFile("a.adoc", "== title ==");
     Path b = writeFile("b.adoc", "== section ==");
     assertThat(execute("--write", a.toString(), b.toString())).isEqualTo(0);
-    assertThat(Files.readString(a, StandardCharsets.UTF_8)).isEqualTo("== title");
-    assertThat(Files.readString(b, StandardCharsets.UTF_8)).isEqualTo("== section");
+    assertThat(Files.readString(a, StandardCharsets.UTF_8)).isEqualTo("== title\n");
+    assertThat(Files.readString(b, StandardCharsets.UTF_8)).isEqualTo("== section\n");
   }
 
   @Test
@@ -155,7 +156,7 @@ class AsciidocFormatterCliTest {
   void noFlagsSingleUnformattedFilePrintsFormattedContentToStdout() throws Exception {
     Path file = writeFile("test.adoc", UNFORMATTED);
     ByteArrayOutputStream captured = captureStdout(() -> execute(file.toString()));
-    assertThat(captured.toString(StandardCharsets.UTF_8)).isEqualTo("== title");
+    assertThat(captured.toString(StandardCharsets.UTF_8)).isEqualTo("== title\n");
   }
 
   @Test
@@ -222,7 +223,7 @@ class AsciidocFormatterCliTest {
       System.setIn(originalIn);
       System.setOut(originalOut);
     }
-    assertThat(captured.toString(StandardCharsets.UTF_8)).isEqualTo("== title");
+    assertThat(captured.toString(StandardCharsets.UTF_8)).isEqualTo("== title\n");
   }
 
   // -------------------------------------------------------------------------
@@ -239,23 +240,23 @@ class AsciidocFormatterCliTest {
 
   @Test
   void enableNonDefaultOptionTransformsContent() throws Exception {
-    Path file = writeFile("test.adoc", "== the title");
+    Path file = writeFile("test.adoc", "== the title\n");
     assertThat(execute("--write", "--title-case", file.toString())).isEqualTo(0);
-    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== The Title");
+    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("== The Title\n");
   }
 
   @Test
   void enableNonDefaultOptionWithShortAlias() throws Exception {
-    Path file = writeFile("test.adoc", "- item");
+    Path file = writeFile("test.adoc", "- item\n");
     assertThat(execute("--write", "-nlb", file.toString())).isEqualTo(0);
-    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("* item");
+    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("* item\n");
   }
 
   @Test
   void enableNonDefaultOptionWithLongAlias() throws Exception {
-    Path file = writeFile("test.adoc", "- item");
+    Path file = writeFile("test.adoc", "- item\n");
     assertThat(execute("--write", "--normalize-list-bullets", file.toString())).isEqualTo(0);
-    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("* item");
+    assertThat(Files.readString(file, StandardCharsets.UTF_8)).isEqualTo("* item\n");
   }
 
   // -------------------------------------------------------------------------

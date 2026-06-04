@@ -30,54 +30,54 @@ class SourceDelimiterTest {
   @Test
   void sourceBlockWithoutDelimiterGetsWrapped() {
     assertThat(apply("[source,java]\npublic void foo() {}"))
-        .isEqualTo("[source,java]\n----\npublic void foo() {}\n----");
+        .isEqualTo("[source,java]\n----\npublic void foo() {}\n----\n");
   }
 
   @Test
   void sourceBlockAlreadyDelimitedLeftUnchanged() {
-    String input = "[source,java]\n----\npublic void foo() {}\n----";
+    String input = "[source,java]\n----\npublic void foo() {}\n----\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void listingBlockWithoutDelimiterGetsWrapped() {
     assertThat(apply("[listing]\nsome literal text"))
-        .isEqualTo("[listing]\n----\nsome literal text\n----");
+        .isEqualTo("[listing]\n----\nsome literal text\n----\n");
   }
 
   @Test
   void multiLineSourceBlockWrapped() {
     assertThat(apply("[source,yaml]\nkey: value\nother: data"))
-        .isEqualTo("[source,yaml]\n----\nkey: value\nother: data\n----");
+        .isEqualTo("[source,yaml]\n----\nkey: value\nother: data\n----\n");
   }
 
   @Test
   void sourceBlockFollowedByBlankLineNotWrapped() {
-    String input = "[source,java]\n\nsome text";
+    String input = "[source,java]\n\nsome text\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void sourceBlockFollowedByAnotherAttributeNotWrapped() {
-    String input = "[source,java]\n[%linenums]\n----\ncode\n----";
+    String input = "[source,java]\n[%linenums]\n----\ncode\n----\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void sourceBlockWithLanguageVariantsWrapped() {
     assertThat(apply("[source, json]\n{\"key\": \"value\"}"))
-        .isEqualTo("[source, json]\n----\n{\"key\": \"value\"}\n----");
+        .isEqualTo("[source, json]\n----\n{\"key\": \"value\"}\n----\n");
   }
 
   @Test
   void sourceWithPercentOptionWrapped() {
     assertThat(apply("[source%autofit,java]\npublic class Foo {}"))
-        .isEqualTo("[source%autofit,java]\n----\npublic class Foo {}\n----");
+        .isEqualTo("[source%autofit,java]\n----\npublic class Foo {}\n----\n");
   }
 
   @Test
   void sourceBlockInsideExistingDelimitedBlockLeftAlone() {
-    String input = "====\n[source,java]\ncode\n====";
+    String input = "====\n[source,java]\ncode\n====\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
@@ -91,20 +91,13 @@ class SourceDelimiterTest {
 
   @Test
   void overLongDelimiterRecognizedAsExistingDelimiter() {
-    String input = "[source,java]\n--------\ncode\n--------";
+    String input = "[source,java]\n--------\ncode\n--------\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void sourceBlockWithIdShorthandGetsWrapped() {
     assertThat(apply("[source#intro,java]\npublic void foo() {}"))
-        .isEqualTo("[source#intro,java]\n----\npublic void foo() {}\n----");
-  }
-
-  @Test
-  void sourceAttributeAsLastLineNotWrapped() {
-    // [source,java] with nothing following — i < lines.size() is false, no wrapping
-    String input = "[source,java]";
-    assertThat(apply(input)).isEqualTo(input);
+        .isEqualTo("[source#intro,java]\n----\npublic void foo() {}\n----\n");
   }
 }

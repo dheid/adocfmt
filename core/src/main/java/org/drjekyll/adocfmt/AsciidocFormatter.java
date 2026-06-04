@@ -101,13 +101,23 @@ public class AsciidocFormatter {
    */
   @org.jspecify.annotations.NonNull
   public String format(@NonNull String str) throws UnsupportedLineEndingException {
-    return LineEnding.determineLineEnding(str)
-        .map(
-            lineEnding ->
-                String.join(
-                    lineEnding.getLineEnding(),
-                    format(Arrays.asList(lineEnding.getSplitPattern().split(str)))))
-        .orElseGet(() -> String.join(System.lineSeparator(), format(List.of(str))));
+    Optional<LineEnding> lineEndingOpt = LineEnding.determineLineEnding(str);
+
+    String lineSeparator =
+        lineEndingOpt.map(LineEnding::getLineEnding).orElse(System.lineSeparator());
+
+    List<String> lines =
+        lineEndingOpt
+            .map(le -> Arrays.asList(le.getSplitPattern().split(str, -1)))
+            .orElseGet(() -> List.of(str));
+
+    String result = String.join(lineSeparator, format(lines));
+
+    if (!result.isEmpty() && !result.endsWith(lineSeparator)) {
+      result += lineSeparator;
+    }
+
+    return result;
   }
 
   /**

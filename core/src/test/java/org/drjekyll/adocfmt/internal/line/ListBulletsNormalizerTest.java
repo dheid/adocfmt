@@ -28,35 +28,35 @@ class ListBulletsNormalizerTest {
 
   @Test
   void dashListItemConvertedToAsterisk() {
-    assertThat(apply("- first item")).isEqualTo("* first item");
+    assertThat(apply("- first item")).isEqualTo("* first item\n");
   }
 
   @Test
   void multipleDashItemsAllConverted() {
-    assertThat(apply("- one\n- two\n- three")).isEqualTo("* one\n* two\n* three");
+    assertThat(apply("- one\n- two\n- three")).isEqualTo("* one\n* two\n* three\n");
   }
 
   @Test
   void asteriskListItemUnchanged() {
-    String input = "* existing asterisk item";
+    String input = "* existing asterisk item\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void nestedAsteriskItemsUnchanged() {
-    String input = "* level one\n** level two\n*** level three";
+    String input = "* level one\n** level two\n*** level three\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void dashInsideCodeBlockUntouched() {
-    String input = "----\n- not a list item\n----";
+    String input = "----\n- not a list item\n----\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void blockDelimiterDashesNotConvertedToAsterisk() {
-    String input = "----\ncode\n----";
+    String input = "----\ncode\n----\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 

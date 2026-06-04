@@ -29,31 +29,31 @@ class OneSentencePerLineApplierTest {
   @Test
   void splitsTwoSentencesOnOneLine() {
     assertThat(apply("First sentence. Second sentence."))
-        .isEqualTo("First sentence.\nSecond sentence.");
+        .isEqualTo("First sentence.\nSecond sentence.\n");
   }
 
   @Test
   void splitsExclamationAndQuestion() {
     assertThat(apply("Watch out! Are you sure? Proceed anyway."))
-        .isEqualTo("Watch out!\nAre you sure?\nProceed anyway.");
+        .isEqualTo("Watch out!\nAre you sure?\nProceed anyway.\n");
   }
 
   @Test
   void exclamationSplitsBeforeLowercaseWord() {
     assertThat(apply("Stop! don't move. Please continue."))
-        .isEqualTo("Stop!\ndon't move.\nPlease continue.");
+        .isEqualTo("Stop!\ndon't move.\nPlease continue.\n");
   }
 
   @Test
   void questionMarkSplitsBeforeLowercaseWord() {
     assertThat(apply("Really? maybe not. Let's check."))
-        .isEqualTo("Really?\nmaybe not.\nLet's check.");
+        .isEqualTo("Really?\nmaybe not.\nLet's check.\n");
   }
 
   @Test
   void joinsMultiLineParagraphThenSplits() {
     assertThat(apply("This is a long sentence that\nspans multiple lines. Second sentence."))
-        .isEqualTo("This is a long sentence that spans multiple lines.\nSecond sentence.");
+        .isEqualTo("This is a long sentence that spans multiple lines.\nSecond sentence.\n");
   }
 
   @Test
@@ -67,191 +67,192 @@ class OneSentencePerLineApplierTest {
   @Test
   void drAbbreviationIsNotASentenceBoundary() {
     assertThat(apply("Consult Dr. Smith before proceeding. Then continue."))
-        .isEqualTo("Consult Dr. Smith before proceeding.\nThen continue.");
+        .isEqualTo("Consult Dr. Smith before proceeding.\nThen continue.\n");
   }
 
   @Test
   void initialIsNotASentenceBoundary() {
     assertThat(apply("The author is A. Smith. He is famous."))
-        .isEqualTo("The author is A. Smith.\nHe is famous.");
+        .isEqualTo("The author is A. Smith.\nHe is famous.\n");
   }
 
   @Test
   void abbreviationFollowedByCapitalIsNotASentenceBoundary() {
     assertThat(apply("Item etc. And more. Next sentence."))
-        .isEqualTo("Item etc. And more.\nNext sentence.");
+        .isEqualTo("Item etc. And more.\nNext sentence.\n");
   }
 
   @Test
   void blockTitleIsSpecialLine() {
     assertThat(apply(".Block Title\nThis is a sentence. This is another."))
-        .isEqualTo(".Block Title\nThis is a sentence.\nThis is another.");
+        .isEqualTo(".Block Title\nThis is a sentence.\nThis is another.\n");
   }
 
   @Test
   void doesNotSplitInsideEgAbbreviation() {
     assertThat(apply("Use a tool (e.g. Spotless) for formatting. It helps."))
-        .isEqualTo("Use a tool (e.g. Spotless) for formatting.\nIt helps.");
+        .isEqualTo("Use a tool (e.g. Spotless) for formatting.\nIt helps.\n");
   }
 
   @Test
   void doesNotSplitDecimalNumber() {
     assertThat(apply("The value is 3.14 approximately. Use it wisely."))
-        .isEqualTo("The value is 3.14 approximately.\nUse it wisely.");
+        .isEqualTo("The value is 3.14 approximately.\nUse it wisely.\n");
   }
 
   @Test
   void doesNotSplitEllipsis() {
     assertThat(apply("Well... that is interesting. Next point."))
-        .isEqualTo("Well... that is interesting.\nNext point.");
+        .isEqualTo("Well... that is interesting.\nNext point.\n");
   }
 
   @Test
   void doesNotTouchHeadings() {
-    String input = "== Section Title\n\nParagraph text.";
+    String input = "== Section Title\n\nParagraph text.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void doesNotTouchAttributeEntries() {
-    String input = ":my-attr: some value\n\nParagraph.";
+    String input = ":my-attr: some value\n\nParagraph.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void doesNotTouchBlockAttributes() {
-    String input = "[source,java]\n----\ncode here\n----\n\nText.";
+    String input = "[source,java]\n----\ncode here\n----\n\nText.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void doesNotTouchListItems() {
-    String input = "* First item. Still item.\n* Second item.";
+    String input = "* First item. Still item.\n* Second item.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void doesNotReformatInsideListingBlock() {
-    String input = "----\nFirst sentence. Second sentence.\n----";
+    String input = "----\nFirst sentence. Second sentence.\n----\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void doesNotReformatInsideExampleBlock() {
-    String input = "====\nFirst sentence. Second sentence.\n====";
+    String input = "====\nFirst sentence. Second sentence.\n====\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void pageBreakIsNotJoinedWithAdjacentMacros() {
-    String input = "toc::[]\n<<<\ninclude::file.adoc[]";
+    String input = "toc::[]\n<<<\ninclude::file.adoc[]\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void pageBreakBetweenParagraphsPassedThrough() {
-    String input = "First paragraph.\n<<<\nSecond paragraph.";
+    String input = "First paragraph.\n<<<\nSecond paragraph.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void includeDirectiveNotJoinedWithParagraph() {
-    String input = "include::chapter.adoc[]\n\nSome text.";
+    String input = "include::chapter.adoc[]\n\nSome text.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void tocMacroPassedThrough() {
-    assertThat(apply("toc::[]")).isEqualTo("toc::[]");
+    assertThat(apply("toc::[]")).isEqualTo("toc::[]\n");
   }
 
   @Test
   void horizontalRulePassedThrough() {
     assertThat(apply("Sentence one.\n'''\nSentence two."))
-        .isEqualTo("Sentence one.\n'''\nSentence two.");
+        .isEqualTo("Sentence one.\n'''\nSentence two.\n");
   }
 
   @Test
   void dashHorizontalRulePassedThrough() {
     assertThat(apply("Sentence one.\n---\nSentence two."))
-        .isEqualTo("Sentence one.\n---\nSentence two.");
+        .isEqualTo("Sentence one.\n---\nSentence two.\n");
   }
 
   @Test
   void asteriskHorizontalRulePassedThrough() {
     assertThat(apply("Sentence one.\n***\nSentence two."))
-        .isEqualTo("Sentence one.\n***\nSentence two.");
+        .isEqualTo("Sentence one.\n***\nSentence two.\n");
   }
 
   @Test
   void blankLineSeparatesParagraphs() {
     assertThat(apply("Paragraph one sentence one. Sentence two.\n\nParagraph two."))
-        .isEqualTo("Paragraph one sentence one.\nSentence two.\n\nParagraph two.");
+        .isEqualTo("Paragraph one sentence one.\nSentence two.\n\nParagraph two.\n");
   }
 
   @Test
   void doesNotMangleSetextHeading() {
-    String input = "My Section\n----------\n\nParagraph text.";
+    String input = "My Section\n----------\n\nParagraph text.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void singleSentenceReturnedAsIs() {
-    assertThat(apply("Just one sentence.")).isEqualTo("Just one sentence.");
+    assertThat(apply("Just one sentence.")).isEqualTo("Just one sentence.\n");
   }
 
   @Test
   void lowercaseAfterPeriodIsNotASplit() {
     assertThat(apply("lowercase follows. not a new sentence. no split here."))
-        .isEqualTo("lowercase follows. not a new sentence. no split here.");
+        .isEqualTo("lowercase follows. not a new sentence. no split here.\n");
   }
 
   @Test
   void numberedListWithTabNotMangledByOneSentencePerLine() {
-    String input = "1.\tFirst item\n2.\tSecond item\n3.\tThird item";
+    String input = "1.\tFirst item\n2.\tSecond item\n3.\tThird item\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void digitAfterPeriodAndSpaceTriggersSplit() {
     // c=='.', next char after space is a digit — Character.isDigit branch
-    assertThat(apply("See item. 2 were found.")).isEqualTo("See item.\n2 were found.");
+    assertThat(apply("See item. 2 were found.")).isEqualTo("See item.\n2 were found.\n");
   }
 
   @Test
   void ellipsisAtEndOfTextNotSplit() {
     // Inner while exits because i reaches end of string (i < text.length() == false)
-    assertThat(apply("Fading out...")).isEqualTo("Fading out...");
+    assertThat(apply("Fading out...")).isEqualTo("Fading out...\n");
   }
 
   @Test
   void closingParenthesisAfterTerminatorIsConsumed() {
-    assertThat(apply("End.) Next sentence.")).isEqualTo("End.)\nNext sentence.");
+    assertThat(apply("End.) Next sentence.")).isEqualTo("End.)\nNext sentence.\n");
   }
 
   @Test
   void closingSquareBracketAfterTerminatorIsConsumed() {
-    assertThat(apply("End.] New sentence.")).isEqualTo("End.]\nNew sentence.");
+    assertThat(apply("End.] New sentence.")).isEqualTo("End.]\nNew sentence.\n");
   }
 
   @Test
   void closingDoubleQuoteAfterTerminatorIsConsumed() {
-    assertThat(apply("He said \"done.\" She agreed.")).isEqualTo("He said \"done.\"\nShe agreed.");
+    assertThat(apply("He said \"done.\" She agreed."))
+        .isEqualTo("He said \"done.\"\nShe agreed.\n");
   }
 
   @Test
   void closingSingleQuoteAfterTerminatorIsConsumed() {
-    assertThat(apply("He left.' He returned.")).isEqualTo("He left.'\nHe returned.");
+    assertThat(apply("He left.' He returned.")).isEqualTo("He left.'\nHe returned.\n");
   }
 
   @Test
   void closingRightSingleQuoteAfterTerminatorIsConsumed() {
-    assertThat(apply("He said ‘ok.’ She replied.")).isEqualTo("He said ‘ok.’\nShe replied.");
+    assertThat(apply("He said ‘ok.’ She replied.")).isEqualTo("He said ‘ok.’\nShe replied.\n");
   }
 
   @Test
   void closingRightDoubleQuoteAfterTerminatorIsConsumed() {
-    assertThat(apply("He said “done.” She agreed.")).isEqualTo("He said “done.”\nShe agreed.");
+    assertThat(apply("He said “done.” She agreed.")).isEqualTo("He said “done.”\nShe agreed.\n");
   }
 
   // -------------------------------------------------------------------------
@@ -263,20 +264,20 @@ class OneSentencePerLineApplierTest {
     // A lone "." line goes into the paragraph buffer; when joined with following text
     // the resulting string starts with '.', making dotPos==0 — isAbbreviationContext
     // must handle dotPos > 0 being false without reading before position 0
-    assertThat(apply(".\nHello world.")).isEqualTo(".\nHello world.");
+    assertThat(apply(".\nHello world.")).isEqualTo(".\nHello world.\n");
   }
 
   @Test
   void orderedListItemWithSpaceIsSpecialLine() {
     // Exercises the charAt(i+1) == ' ' branch on line 390 of isSpecialLine
-    String input = "1. First item\n2. Second item";
+    String input = "1. First item\n2. Second item\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void closingRightSingleQuoteU2019AfterTerminatorIsConsumed() {
     // ’ = right single quotation mark (curly apostrophe)
-    assertThat(apply("He said ‘ok.’ She replied.")).isEqualTo("He said ‘ok.’\nShe replied.");
+    assertThat(apply("He said ‘ok.’ She replied.")).isEqualTo("He said ‘ok.’\nShe replied.\n");
   }
 
   @Test

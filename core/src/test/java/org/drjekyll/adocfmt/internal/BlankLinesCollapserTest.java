@@ -29,37 +29,37 @@ class BlankLinesCollapserTest {
 
   @Test
   void singleBlankLinePreserved() {
-    assertThat(apply("A\n\nB")).isEqualTo("A\n\nB");
+    assertThat(apply("A\n\nB")).isEqualTo("A\n\nB\n");
   }
 
   @Test
   void twoBlankLinesCollapsedToOne() {
-    assertThat(apply("A\n\n\nB")).isEqualTo("A\n\nB");
+    assertThat(apply("A\n\n\nB")).isEqualTo("A\n\nB\n");
   }
 
   @Test
   void threeBlankLinesCollapsedToOne() {
-    assertThat(apply("A\n\n\n\nB")).isEqualTo("A\n\nB");
+    assertThat(apply("A\n\n\n\nB")).isEqualTo("A\n\nB\n");
   }
 
   @Test
   void noBlankLinesUnchanged() {
-    assertThat(apply("A\nB\nC")).isEqualTo("A\nB\nC");
+    assertThat(apply("A\nB\nC")).isEqualTo("A\nB\nC\n");
   }
 
   @Test
   void multipleGroupsEachCollapsed() {
-    assertThat(apply("A\n\n\nB\n\n\n\nC")).isEqualTo("A\n\nB\n\nC");
+    assertThat(apply("A\n\n\nB\n\n\n\nC")).isEqualTo("A\n\nB\n\nC\n");
   }
 
   @Test
   void leadingBlankLinesCollapsed() {
-    assertThat(apply("\n\n\nA")).isEqualTo("\nA");
+    assertThat(apply("\n\n\nA")).isEqualTo("\nA\n");
   }
 
   @Test
   void trailingBlankLinesCollapsed() {
-    assertThat(apply("A\n\n\n")).isEqualTo("A");
+    assertThat(apply("A\n\n\n")).isEqualTo("A\n");
   }
 
   @Test
