@@ -3,7 +3,6 @@
 [![Java CI with Maven](https://github.com/dheid/adocfmt/actions/workflows/ci.yml/badge.svg)](https://github.com/dheid/adocfmt/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/org.drjekyll/adocfmt)](https://central.sonatype.com/artifact/org.drjekyll/adocfmt)
 [![GitHub Release](https://img.shields.io/github/v/release/dheid/adocfmt)](https://github.com/dheid/adocfmt/releases/latest)
-[![License](https://img.shields.io/github/license/dheid/adocfmt)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-17%2B-blue)](https://adoptium.net/)
 
 An opinionated AsciiDoc formatter for Java and the command line.
