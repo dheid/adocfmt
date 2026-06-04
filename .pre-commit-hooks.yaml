@@ -4,7 +4,7 @@
   language: script
   entry: pre-commit/adocfmt.sh
   args: [--write]
-  files: '\.(adoc|asciidoc|asc)$'
+  files: '\.(adoc|asciidoc)$'
 
 - id: adocfmt-check
   name: Check AsciiDoc formatting
@@ -12,4 +12,4 @@
   language: script
   entry: pre-commit/adocfmt.sh
   args: [--check]
-  files: '\.(adoc|asciidoc|asc)$'
+  files: '\.(adoc|asciidoc)$'

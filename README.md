@@ -389,7 +389,7 @@ repos:
   - repo: https://github.com/dheid/adocfmt
     rev: v0.2.0
     hooks:
-      - id: adocfmt        # formats .adoc/.asciidoc/.asc files in place
+      - id: adocfmt        # formats .adoc/.asciidoc files in place
       - id: adocfmt-check  # CI mode: fails if any file would change
 ```
 
