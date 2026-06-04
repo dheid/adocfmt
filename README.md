@@ -379,6 +379,30 @@ adocfmt -w -tc -nlb -nolm -esd my.adoc
 adocfmt -w -tc -nlb -nolm -esd -ols=false my.adoc
 ```
 
+## pre-commit
+
+adocfmt can be used as a [pre-commit](https://pre-commit.com/) hook.
+Add the following to your `.pre-commit-config.yaml`:
+
+```yaml
+repos:
+  - repo: https://github.com/dheid/adocfmt
+    rev: v0.1.2
+    hooks:
+      - id: adocfmt        # formats .adoc/.asciidoc/.asc files in place
+      - id: adocfmt-check  # CI mode: fails if any file would change
+```
+
+Use `adocfmt` in a local developer workflow (rewrites files before the commit is
+recorded) and `adocfmt-check` in CI (read-only, exits 1 if any file is not
+formatted).
+
+**Requirement:** Java 17 or later must be on your `PATH`.
+The hook downloads `adocfmt.jar` from the GitHub release on first use and caches
+it in `~/.cache/adocfmt/` (or `$XDG_CACHE_HOME/adocfmt/`).
+Set the `ADOCFMT_JAR` environment variable to point at a local jar to skip the
+download entirely.
+
 ## Development
 
 - **Layout:** `adocfmt` (core library) | `adocfmt-cli` (shaded JAR)

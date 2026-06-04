@@ -1,0 +1,15 @@
+- id: adocfmt
+  name: Format AsciiDoc files
+  description: Formats AsciiDoc files in place using adocfmt.
+  language: script
+  entry: pre-commit/adocfmt.sh
+  args: [--write]
+  files: '\.(adoc|asciidoc|asc)$'
+
+- id: adocfmt-check
+  name: Check AsciiDoc formatting
+  description: Verifies AsciiDoc files are formatted without modifying them. Exits with 1 if any file would change.
+  language: script
+  entry: pre-commit/adocfmt.sh
+  args: [--check]
+  files: '\.(adoc|asciidoc|asc)$'
