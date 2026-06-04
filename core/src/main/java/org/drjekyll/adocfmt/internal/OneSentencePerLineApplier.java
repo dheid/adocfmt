@@ -357,7 +357,11 @@ public class OneSentencePerLineApplier implements Runnable {
     if (first == '=' || first == '[' || first == '|' || first == ' ' || first == '\t') {
       return true;
     }
-    if (line.startsWith("//") || line.startsWith("<<<") || "'''".equals(line) || "+".equals(line)) {
+    if (line.startsWith("//")
+        || line.startsWith("<<<")
+        || "'''".equals(line)
+        || "+".equals(line)
+        || line.endsWith(" +")) {
       return true;
     }
     if (first == ':' && line.length() > 1 && line.charAt(1) != ':') {

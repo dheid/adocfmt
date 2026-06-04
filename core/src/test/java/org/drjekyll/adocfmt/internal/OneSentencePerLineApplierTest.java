@@ -39,6 +39,17 @@ class OneSentencePerLineApplierTest {
   }
 
   @Test
+  void doesNotChangeLinesEndingWithAPlusCharacter() {
+    String input =
+"""
+If you want to break a line +
+just end it in a {plus} sign +
+and continue typing on the next line.
+""";
+    assertThat(apply(input)).isEqualTo(input);
+  }
+
+  @Test
   void exclamationSplitsBeforeLowercaseWord() {
     assertThat(apply("Stop! don't move. Please continue."))
         .isEqualTo("Stop!\ndon't move.\nPlease continue.\n");

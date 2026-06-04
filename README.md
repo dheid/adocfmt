@@ -255,7 +255,7 @@ Requires Java 17+. Add the core module to your project:
 <dependency>
     <groupId>org.drjekyll</groupId>
     <artifactId>adocfmt</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 
