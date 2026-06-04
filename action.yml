@@ -1,0 +1,39 @@
+name: adocfmt
+description: Format or check AsciiDoc files using adocfmt. Sets up Java automatically; no pre-installed runtime required.
+branding:
+  icon: file-text
+  color: orange
+
+inputs:
+  mode:
+    description: "'check' exits non-zero if any file would change (use in CI to gate PRs). 'write' formats files in place and leaves the working tree changed."
+    default: check
+  paths:
+    description: Space-separated list of files or directories to process. Directories are walked recursively; only .adoc and .asciidoc files are selected. Explicit file paths are always processed regardless of extension.
+    default: '.'
+  version:
+    description: adocfmt version to download and run.
+    default: '0.2.0'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Java
+      uses: actions/setup-java@v5
+      with:
+        java-version: '17'
+        distribution: temurin
+
+    - name: Run adocfmt
+      shell: bash
+      env:
+        ADOCFMT_VERSION: ${{ inputs.version }}
+      run: |
+        if [ "${{ inputs.mode }}" = "write" ]; then
+          FLAG="--write"
+        else
+          FLAG="--check"
+        fi
+        # Word-splitting on paths is intentional: the input is space-separated entries
+        # shellcheck disable=SC2086
+        "${{ github.action_path }}/pre-commit/adocfmt.sh" "$FLAG" ${{ inputs.paths }}

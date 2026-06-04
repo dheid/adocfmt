@@ -403,6 +403,57 @@ it in `~/.cache/adocfmt/` (or `$XDG_CACHE_HOME/adocfmt/`).
 Set the `ADOCFMT_JAR` environment variable to point at a local jar to skip the
 download entirely.
 
+## GitHub Actions
+
+adocfmt is available as a reusable composite GitHub Action.
+Java is set up automatically — no pre-installed runtime is required in the
+calling workflow.
+
+### Check mode (gate a PR)
+
+Fails the job when any `.adoc` or `.asciidoc` file is not formatted.
+Directories are walked recursively.
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
+  - uses: dheid/adocfmt@v0.2.0
+    with:
+      mode: check    # default — can be omitted
+      paths: .       # default — whole repo
+```
+
+### Write mode (auto-fix)
+
+Formats files in place and leaves the working tree changed.
+The action does not commit or open a PR; use a separate step for that,
+for example [stefanzweifel/git-auto-commit-action](https://github.com/stefanzweifel/git-auto-commit-action)
+or [peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-request).
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
+  - uses: dheid/adocfmt@v0.2.0
+    with:
+      mode: write
+      paths: docs     # limit to a subdirectory
+  # working tree now contains any formatting changes — commit or PR here
+```
+
+### Inputs
+
+|   Input   | Default |                               Description                                |
+|-----------|---------|--------------------------------------------------------------------------|
+| `mode`    | `check` | `check` or `write`                                                       |
+| `paths`   | `.`     | Space-separated files or directories; directories are walked recursively |
+| `version` | `0.2.0` | adocfmt version to download; override to pin to a specific release       |
+
+**Notes:**
+
+- Java 17 is set up via [actions/setup-java](https://github.com/actions/setup-java) (Temurin distribution) as part of the action.
+- Only `.adoc` and `.asciidoc` files are selected during directory traversal. Explicitly listed file paths are always processed regardless of extension.
+- The action downloads the adocfmt jar from the GitHub release on first use. Subsequent runs in the same job reuse the cached jar.
+
 ## Development
 
 - **Layout:** `adocfmt` (core library) | `adocfmt-cli` (shaded JAR)
