@@ -1,0 +1,15 @@
+target/
+*.class
+*.log
+*.iml
+.idea/
+.project
+.settings/
+.classpath
+.DS_Store
+.factorypath
+bin/
+dependency-reduced-pom.xml
+*.rpm
+*.deb
+.vscode

@@ -1,0 +1,32 @@
+# Dependabot configuration for Maven and GitHub Actions.
+# NOTE: Dependabot security updates and the dependency graph must be manually
+# enabled in repo Settings > Code security and analysis.
+
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directories:
+      - "/**"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    allow:
+      - dependency-type: "all"
+    groups:
+      maven-all:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    groups:
+      actions-all:
+        patterns:
+          - "*"

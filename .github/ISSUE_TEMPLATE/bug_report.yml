@@ -1,0 +1,62 @@
+name: "🐛 Bug Report"
+description: "Report a formatting error or a crash to help us improve."
+title: "[BUG] "
+labels: ["bug"]
+assignees: ["dheid"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Your feedback helps make `adocfmt` better for everyone.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+      placeholder: "e.g., The formatter mangles listing blocks when they contain specific characters."
+    validations:
+      required: true
+  - type: textarea
+    id: input-output
+    attributes:
+      label: Input & Expected Output
+      description: Please provide the AsciiDoc input and what you expected the formatted output to look like.
+      placeholder: |
+        ### Input
+        ```adoc
+        [source,java]
+        ----
+        public void foo() {}
+        ----
+        ```
+
+        ### Expected Output
+        ```adoc
+        [source,java]
+        ----
+        public void foo() {}
+        ----
+        ```
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How did you run the formatter?
+      placeholder: "e.g., Run `java -jar adocfmt.jar my-file.adoc`"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Which version of `adocfmt` are you using?
+      placeholder: "e.g., 0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here (e.g., Java version, OS).

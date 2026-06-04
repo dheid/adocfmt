@@ -1,0 +1,28 @@
+name: "adocfmt"
+arch: "all"
+platform: "linux"
+version: "${VERSION}"
+section: "devel"
+priority: "extra"
+maintainer: "Daniel Heid <mail@daniel-heid.de>"
+description: "An opinionated AsciiDoc formatter."
+vendor: "Daniel Heid"
+homepage: "https://github.com/dheid/adocfmt"
+license: "Apache-2.0"
+
+contents:
+  - src: "cli/target/adocfmt.jar"
+    dst: "/usr/share/adocfmt/adocfmt.jar"
+  - src: "cli/adocfmt-launcher.sh"
+    dst: "/usr/bin/adocfmt"
+    type: "file"
+    file_info:
+      mode: 0755
+
+overrides:
+  deb:
+    depends:
+      - "default-jre-headless | java17-runtime-headless"
+  rpm:
+    depends:
+      - "java-17-openjdk-headless"

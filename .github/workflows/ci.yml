@@ -1,0 +1,62 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+      pages: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - run: mvn -B verify
+      - uses: dorny/test-reporter@v3
+        if: always()
+        with:
+          name: JUnit Tests
+          path: "**/target/surefire-reports/TEST-*.xml"
+          reporter: java-junit
+          fail-on-error: false
+      - uses: madrapps/jacoco-report@v1.8.0
+        with:
+          paths: ${{ github.workspace }}/**/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 80
+          min-coverage-changed-files: 80
+      - uses: actions/configure-pages@v6
+        if: github.ref == 'refs/heads/main'
+      - uses: actions/jekyll-build-pages@v1
+        if: github.ref == 'refs/heads/main'
+        with:
+          destination: ./page
+      - if: github.ref == 'refs/heads/main'
+        run: |
+          cp -r page/. _site/
+      - uses: actions/upload-pages-artifact@v5
+        if: github.ref == 'refs/heads/main'
+
+  publish-docs:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5

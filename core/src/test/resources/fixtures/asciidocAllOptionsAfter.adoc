@@ -1,0 +1,91 @@
+= My Document Title
+
+First sentence.
+Second sentence here.
+
+== A Section Heading
+
+Without blank line after.
+
+* Dash list item
+
+. First ordered item
+
+[source,java]
+----
+public void foo() {}
+----
+
+----
+code block
+----
+
+== A Subsection
+
+Is this working?
+Yes it works!
+
+.A Block Title
+
+. Tenth item
+. First item with tab
+
+== Consecutive One
+
+=== Consecutive Two
+
+:toc:
+:imagesdir: images
+
+== Text Formatting
+
+Inline *bold*, _italic_, `monospace`, #highlighted#, ^super^script and ~sub~script in a sentence.
+Use https://example.com[a hyperlink] or a cross-reference like <<text-formatting>>.
+Escape \{attribute-ref} and \*non-bold* from substitution.
+Symbol replacements like (C), (R), ->, <- stay intact.
+
+....
+literal block content is not modified
+....
+
+[NOTE]
+====
+Block admonition content stays unchanged inside delimiters.
+====
+
+|===
+|Name |Value
+
+|alpha
+|one
+
+|beta
+|two
+
+|===
+
+image::diagram.png[Architecture diagram]
+
+include::partial.adoc[]
+
+Press kbd:[Ctrl+S] to save or kbd:[Ctrl+Z] to undo.
+
+// This comment is not modified.
+
+////
+This block comment is not modified.
+////
+
+'''
+
+<<<
+
+This sentence includes a footnote.footnote:[Short footnote text.]
+
+[bibliography]
+
+== References
+
+* [[[ref-1,1]]] Author. _Book Title_. Publisher, year.
+
+See <<ref-1>> for details.

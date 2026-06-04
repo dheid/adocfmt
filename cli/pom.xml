@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.drjekyll</groupId>
+    <artifactId>adocfmt-parent</artifactId>
+    <version>0.1.0</version>
+  </parent>
+
+  <artifactId>adocfmt-cli</artifactId>
+  <name>adocfmt-cli</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>4.7.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.drjekyll</groupId>
+      <artifactId>adocfmt</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.drjekyll.adocfmt.cli.AsciidocFormatterCli</mainClass>
+                </transformer>
+              </transformers>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <finalName>adocfmt</finalName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+        <artifactId>launch4j-maven-plugin</artifactId>
+        <version>2.7.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>launch4j</goal>
+            </goals>
+            <configuration>
+              <headerType>console</headerType>
+              <outfile>target/adocfmt.exe</outfile>
+              <jar>target/adocfmt.jar</jar>
+              <errTitle>adocfmt</errTitle>
+              <classPath>
+                <mainClass>org.drjekyll.adocfmt.cli.AsciidocFormatterCli</mainClass>
+              </classPath>
+              <jre>
+                <minVersion>17</minVersion>
+              </jre>
+              <versionInfo>
+                <fileVersion>0.1.0.0</fileVersion>
+                <txtFileVersion>0.1.0</txtFileVersion>
+                <fileDescription>An opinionated AsciiDoc formatter.</fileDescription>
+                <copyright>Daniel Heid</copyright>
+                <productVersion>0.1.0.0</productVersion>
+                <txtProductVersion>0.1.0</txtProductVersion>
+                <productName>adocfmt</productName>
+                <internalName>adocfmt</internalName>
+                <originalFilename>adocfmt.exe</originalFilename>
+              </versionInfo>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
