@@ -28,65 +28,67 @@ class SetextHeadingsNormalizerTest {
 
   @Test
   void convertsLevel0SetextHeading() {
-    assertThat(applySetext("Document Title\n==============")).isEqualTo("= Document Title");
+    assertThat(applySetext("Document Title\n==============")).isEqualTo("= Document Title\n");
   }
 
   @Test
   void convertsLevel1SetextHeading() {
-    assertThat(applySetext("Section Title\n-------------")).isEqualTo("== Section Title");
+    assertThat(applySetext("Section Title\n-------------")).isEqualTo("== Section Title\n");
   }
 
   @Test
   void convertsLevel2SetextHeading() {
-    assertThat(applySetext("Subsection Title\n~~~~~~~~~~~~~~~~")).isEqualTo("=== Subsection Title");
+    assertThat(applySetext("Subsection Title\n~~~~~~~~~~~~~~~~"))
+        .isEqualTo("=== Subsection Title\n");
   }
 
   @Test
   void convertsLevel3SetextHeading() {
-    assertThat(applySetext("Deep Section\n^^^^^^^^^^^^")).isEqualTo("==== Deep Section");
+    assertThat(applySetext("Deep Section\n^^^^^^^^^^^^")).isEqualTo("==== Deep Section\n");
   }
 
   @Test
   void convertsLevel4SetextHeading() {
-    assertThat(applySetext("Deepest Section\n+++++++++++++++")).isEqualTo("===== Deepest Section");
+    assertThat(applySetext("Deepest Section\n+++++++++++++++"))
+        .isEqualTo("===== Deepest Section\n");
   }
 
   @Test
   void convertsAllSetextLevelsInDocument() {
     String input = "Document\n========\n\nSection\n-------\n\nSubsection\n~~~~~~~~~~";
-    assertThat(applySetext(input)).isEqualTo("= Document\n\n== Section\n\n=== Subsection");
+    assertThat(applySetext(input)).isEqualTo("= Document\n\n== Section\n\n=== Subsection\n");
   }
 
   @Test
   void doesNotConvertWhenUnderlineTooShort() {
-    assertThat(applySetext("Long Title Here\n---")).isEqualTo("Long Title Here\n---");
+    assertThat(applySetext("Long Title Here\n---")).isEqualTo("Long Title Here\n---\n");
   }
 
   @Test
   void doesNotConvertBlockDelimiterAsHeadingUnderline() {
-    assertThat(applySetext("----\ncode line\n----")).isEqualTo("----\ncode line\n----");
+    assertThat(applySetext("----\ncode line\n----")).isEqualTo("----\ncode line\n----\n");
   }
 
   @Test
   void doesNotConvertLineStartingWithEquals() {
     assertThat(applySetext("== Already Atx\n==============="))
-        .isEqualTo("== Already Atx\n===============");
+        .isEqualTo("== Already Atx\n===============\n");
   }
 
   @Test
   void doesNotConvertLineStartingWithBracket() {
     assertThat(applySetext("[source,java]\n============="))
-        .isEqualTo("[source,java]\n=============");
+        .isEqualTo("[source,java]\n=============\n");
   }
 
   @Test
   void doesNotConvertLineStartingWithSlash() {
-    assertThat(applySetext("// comment\n===========")).isEqualTo("// comment\n===========");
+    assertThat(applySetext("// comment\n===========")).isEqualTo("// comment\n===========\n");
   }
 
   @Test
   void doesNotConvertClosingBracketBeforeBlockDelimiter() {
-    String input = "[source, json]\n----\nusers: [\n  {\n    \"id\": \"abc\"\n  }\n]\n----";
+    String input = "[source, json]\n----\nusers: [\n  {\n    \"id\": \"abc\"\n  }\n]\n----\n";
     assertThat(applySetext(input)).isEqualTo(input);
   }
 
@@ -109,6 +111,6 @@ class SetextHeadingsNormalizerTest {
               cfg.ensureHeadingBlankLines(true);
               cfg.titleCase(true);
             });
-    assertThat(output).isEqualTo("some text\n\n== My Cool Section\n\nsome body");
+    assertThat(output).isEqualTo("some text\n\n== My Cool Section\n\nsome body\n");
   }
 }

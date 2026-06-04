@@ -1,5 +1,11 @@
 # adocfmt
 
+[![Java CI with Maven](https://github.com/dheid/adocfmt/actions/workflows/ci.yml/badge.svg)](https://github.com/dheid/adocfmt/actions/workflows/ci.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/org.drjekyll/adocfmt)](https://central.sonatype.com/artifact/org.drjekyll/adocfmt)
+[![GitHub Release](https://img.shields.io/github/v/release/dheid/adocfmt)](https://github.com/dheid/adocfmt/releases/latest)
+[![License](https://img.shields.io/github/license/dheid/adocfmt)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-17%2B-blue)](https://adoptium.net/)
+
 An opinionated AsciiDoc formatter for Java and the command line.
 
 ## Features
@@ -26,6 +32,7 @@ The following transformations are available (default state shown):
 - **Idempotent:** `format(format(x)) == format(x)`.
 - **Safe:** Delimited blocks (code, literal, passthrough), comments, and directives are never modified.
 - **Semantic:** Input and output render to identical normalised HTML (verified via AsciidoctorJ in tests).
+- **Trailing Newline:** Formatted output always ends with exactly one newline.
 
 ## Code Style
 
@@ -248,7 +255,7 @@ Requires Java 17+. Add the core module to your project:
 <dependency>
     <groupId>org.drjekyll</groupId>
     <artifactId>adocfmt</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 

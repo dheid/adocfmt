@@ -28,38 +28,38 @@ class HeadingBlankLinesEnsurerTest {
 
   @Test
   void blankLineAddedAfterHeading() {
-    assertThat(apply("== Section\nContent")).isEqualTo("== Section\n\nContent");
+    assertThat(apply("== Section\nContent")).isEqualTo("== Section\n\nContent\n");
   }
 
   @Test
   void blankLineAddedBeforeHeading() {
-    assertThat(apply("Content\n== Section")).isEqualTo("Content\n\n== Section");
+    assertThat(apply("Content\n== Section")).isEqualTo("Content\n\n== Section\n");
   }
 
   @Test
   void blankLinesAddedBothSides() {
-    assertThat(apply("Before\n== Section\nAfter")).isEqualTo("Before\n\n== Section\n\nAfter");
+    assertThat(apply("Before\n== Section\nAfter")).isEqualTo("Before\n\n== Section\n\nAfter\n");
   }
 
   @Test
   void noDoubleBlankLineWhenAlreadyPresent() {
-    String input = "Before\n\n== Section\n\nAfter";
+    String input = "Before\n\n== Section\n\nAfter\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void noBlankLineBeforeFirstHeading() {
-    assertThat(apply("= Title\nContent")).isEqualTo("= Title\n\nContent");
+    assertThat(apply("= Title\nContent")).isEqualTo("= Title\n\nContent\n");
   }
 
   @Test
   void consecutiveHeadingsGetBlankLineBetweenThem() {
-    assertThat(apply("== Section A\n=== Subsection")).isEqualTo("== Section A\n\n=== Subsection");
+    assertThat(apply("== Section A\n=== Subsection")).isEqualTo("== Section A\n\n=== Subsection\n");
   }
 
   @Test
   void headingInsideCodeBlockGetsNoBlankLine() {
-    String input = "----\n== not a real heading\ncontent\n----";
+    String input = "----\n== not a real heading\ncontent\n----\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 

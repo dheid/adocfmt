@@ -28,34 +28,34 @@ class OrderedListMarkerNormalizerTest {
 
   @Test
   void numberedListItemConvertedToAsciidocStyle() {
-    assertThat(apply("1. First item")).isEqualTo(". First item");
+    assertThat(apply("1. First item")).isEqualTo(". First item\n");
   }
 
   @Test
   void largeNumberConvertedToAsciidocStyle() {
-    assertThat(apply("42. Some item")).isEqualTo(". Some item");
+    assertThat(apply("42. Some item")).isEqualTo(". Some item\n");
   }
 
   @Test
   void multipleNumberedItemsAllConverted() {
-    assertThat(apply("1. First\n2. Second\n3. Third")).isEqualTo(". First\n. Second\n. Third");
+    assertThat(apply("1. First\n2. Second\n3. Third")).isEqualTo(". First\n. Second\n. Third\n");
   }
 
   @Test
   void asciidocDotStyleUnchanged() {
-    String input = ". First\n. Second";
+    String input = ". First\n. Second\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void numberedListInsideCodeBlockUntouched() {
-    String input = "----\n1. not a list item\n----";
+    String input = "----\n1. not a list item\n----\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
   @Test
   void decimalNumberNotConvertedToListMarker() {
-    String input = "Version 3.14 is released.";
+    String input = "Version 3.14 is released.\n";
     assertThat(apply(input)).isEqualTo(input);
   }
 
@@ -69,30 +69,30 @@ class OrderedListMarkerNormalizerTest {
 
   @Test
   void numberedListWithTabAfterNumberConverted() {
-    assertThat(apply("1.\tFirst item")).isEqualTo(". First item");
+    assertThat(apply("1.\tFirst item")).isEqualTo(". First item\n");
   }
 
   @Test
   void digitsWithNoFollowingCharUnchanged() {
     // While loop exits because i reaches end of string (not because of non-digit)
-    assertThat(apply("123")).isEqualTo("123");
+    assertThat(apply("123")).isEqualTo("123\n");
   }
 
   @Test
   void digitDotAtEndOfLineUnchanged() {
     // i+1 >= line.length() — nothing follows the dot
-    assertThat(apply("1.")).isEqualTo("1.");
+    assertThat(apply("1.")).isEqualTo("1.\n");
   }
 
   @Test
   void digitFollowedByNonDotUnchanged() {
     // charAt(i) != '.' — the char after digits is not a dot
-    assertThat(apply("1x item")).isEqualTo("1x item");
+    assertThat(apply("1x item")).isEqualTo("1x item\n");
   }
 
   @Test
   void digitDotNonSeparatorUnchanged() {
     // sep is neither space nor tab
-    assertThat(apply("1.x item")).isEqualTo("1.x item");
+    assertThat(apply("1.x item")).isEqualTo("1.x item\n");
   }
 }
