@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.drjekyll.adocfmt.internal.line;
-
-import static org.assertj.core.api.Assertions.assertThat;
+package org.drjekyll.adocfmt.internal;
 
 import org.drjekyll.adocfmt.AsciidocFormatterTestSupport;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ListBulletsNormalizerTest {
 
@@ -45,6 +45,18 @@ class ListBulletsNormalizerTest {
   @Test
   void nestedAsteriskItemsUnchanged() {
     String input = "* level one\n** level two\n*** level three\n";
+    assertThat(apply(input)).isEqualTo(input);
+  }
+
+  @Test
+  void mixedItemsUnchanged() {
+    String input =
+"""
+- characters can be escaped using a {backslash}
+* for instance, you can escape a quote inside emphasized text like _Here\\'s Johnny!_
+- you can safely use reserved XML characters like <, > and &, which are escaped when converting
+- force a space{sp}between inline elements using the \\{sp} attribute
+""";
     assertThat(apply(input)).isEqualTo(input);
   }
 

@@ -54,13 +54,6 @@ class PerLineTransformerTest {
   }
 
   @Test
-  void appliesListBulletsOutsideBlock() {
-    AsciidocFormatterConfig config =
-        AsciidocFormatterConfig.builder().normalizeListBullets(true).build();
-    assertThat(run(config, "- item")).containsExactly("* item");
-  }
-
-  @Test
   void doesNotApplyTitleCaseInsideBlock() {
     AsciidocFormatterConfig config = AsciidocFormatterConfig.builder().titleCase(true).build();
     assertThat(run(config, "----", "== not a heading inside block", "----"))
@@ -84,11 +77,8 @@ class PerLineTransformerTest {
   @Test
   void appliesMultipleTransformationsToOneLine() {
     AsciidocFormatterConfig config =
-        AsciidocFormatterConfig.builder()
-            .removeTrailingWhitespace(true)
-            .normalizeListBullets(true)
-            .build();
-    assertThat(run(config, "- item   ")).containsExactly("* item");
+        AsciidocFormatterConfig.builder().removeTrailingWhitespace(true).titleCase(true).build();
+    assertThat(run(config, "== title case   ")).containsExactly("== Title Case");
   }
 
   @Test

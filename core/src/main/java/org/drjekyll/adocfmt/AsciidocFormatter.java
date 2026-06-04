@@ -26,10 +26,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.drjekyll.adocfmt.internal.BlankLinesCollapser;
-import org.drjekyll.adocfmt.internal.HeadingBlankLinesEnsurer;
-import org.drjekyll.adocfmt.internal.OneSentencePerLineApplier;
-import org.drjekyll.adocfmt.internal.SourceDelimiter;
+import org.drjekyll.adocfmt.internal.*;
 import org.drjekyll.adocfmt.internal.block.BlockNormalizer;
 import org.drjekyll.adocfmt.internal.line.PerLineTransformer;
 import org.drjekyll.adocfmt.internal.setext.SetextHeadingsNormalizer;
@@ -141,6 +138,7 @@ public class AsciidocFormatter {
     perLineTransformer.run();
 
     applyFormatting(result, config::isEnsureHeadingBlankLines, HeadingBlankLinesEnsurer::new);
+    applyFormatting(result, config::isNormalizeListBullets, ListBulletsNormalizer::new);
     applyFormatting(result, config::isOneSentencePerLine, OneSentencePerLineApplier::new);
     applyFormatting(result, config::isCollapseConsecutiveBlankLines, BlankLinesCollapser::new);
 

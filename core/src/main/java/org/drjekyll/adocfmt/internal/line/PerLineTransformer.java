@@ -15,7 +15,6 @@ import org.drjekyll.adocfmt.internal.block.BlockTracker;
 @RequiredArgsConstructor
 public class PerLineTransformer implements Runnable {
 
-  private static final ListBulletsNormalizer LIST_BULLETS_NORMALIZER = new ListBulletsNormalizer();
   private static final TrailingWhitespaceRemover TRAILING_WHITESPACE_REMOVER =
       new TrailingWhitespaceRemover();
   private static final TitleCaseTransformer TITLE_CASE_TRANSFORMER = new TitleCaseTransformer();
@@ -41,7 +40,6 @@ public class PerLineTransformer implements Runnable {
       } else {
         applyLineTransformation(i, TRAILING_HEADER_EQUALS_SIGN_REMOVER);
         applyLineTransformation(i, TITLE_CASE_TRANSFORMER);
-        applyLineTransformation(i, LIST_BULLETS_NORMALIZER);
         applyLineTransformation(i, ORDERED_LIST_MARKER_NORMALIZER);
       }
     }
