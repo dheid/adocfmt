@@ -7,6 +7,8 @@
 
 An opinionated AsciiDoc formatter for Java and the command line.
 
+![adocfmt Banner](banner.png)
+
 ## Features
 
 adocfmt applies a configurable set of transformations to AsciiDoc source files.
