@@ -23,6 +23,7 @@ The following transformations are available (default state shown):
 | Remove trailing header `=` signs | **on**  | Strip trailing `=` from headings (e.g. `== Title ==` → `== Title`)       |
 | Remove trailing whitespace       | **on**  | Strip trailing whitespace from every line                                |
 | Ensure heading blank lines       | **on**  | Surround each section heading with exactly one blank line                |
+| Format tables                    | **on**  | Align table cells and format layouts                                     |
 | Title case                       | off     | Apply title-case formatting to section headings and block titles         |
 | Normalize list bullets           | off     | Normalise unordered list bullets from `- ` to `* `                       |
 | Normalize ordered list markers   | off     | Replace explicit numbers (`1. `, `2. `) with the auto-number marker `. ` |
@@ -256,8 +257,8 @@ Requires Java 17+. Add the core module to your project:
 <dependency>
     <groupId>org.drjekyll</groupId>
     <artifactId>adocfmt</artifactId>
-    <version>0.2.0</version>
-</dependency>
+    <version>0.3.0</version>
+    </dependency>
 ```
 
 Build an `AsciidocFormatterConfig` with the desired transformations enabled, then create an `AsciidocFormatter` and call
@@ -324,6 +325,10 @@ Usage: adocfmt [-chVw] [-cbl[=<true|false>]] [-ehlb[=<true|false>]]
 | `-rthe`, `--remove-trailing-header-equals`  | `true`  | Remove trailing `=` from headings                                         |
 | `-rtrw`, `--remove-trailing-whitespace`     | `true`  | Remove trailing whitespace                                                |
 | `-ehlb`, `--ensure-heading-blank-lines`     | `true`  | Ensure blank lines around headings                                        |
+| `-ft`, `--format-tables`                    | `true`  | Format AsciiDoc tables                                                    |
+| `-tl`, `--table-layout`                     | `AUTO`  | Table layout (AUTO, EXPANDED, PRESERVE)                                   |
+| `-tmlw`, `--table-max-line-width`           | `120`   | Max line width for tables                                                 |
+| `-tbl`, `--table-blank-lines`               | `NONE`  | Blank lines in tables (NONE, HEADER, ALL, PRESERVE)                       |
 | `-tc`, `--title-case`                       | `false` | Apply title case to headings                                              |
 | `-nlb`, `--normalize-list-bullets`          | `false` | Normalise list bullets to `*`                                             |
 | `-nolm`, `--normalize-ordered-list-markers` | `false` | Replace explicit numbers with `.`                                         |
@@ -457,9 +462,36 @@ steps:
 
 ## Development
 
-- **Layout:** `adocfmt` (core library) | `adocfmt-cli` (shaded JAR)
-- **Build:** `mvn verify`
-- **Versioning:** Semantic. Any change to formatting output is at least a minor update as it affects `--check` builds.
+### Project Structure
+
+- `core/`: The `adocfmt` library, containing formatting logic and configuration.
+- `cli/`: The command-line interface, which builds a shaded (fat) JAR.
+
+### Build
+
+To build the project and run all tests, use Maven:
+
+```bash
+mvn clean install
+```
+
+### Run
+
+After building, you can run the CLI using the generated fat JAR:
+
+```bash
+java -jar cli/target/adocfmt.jar --help
+```
+
+To format a file in-place:
+
+```bash
+java -jar cli/target/adocfmt.jar -w path/to/file.adoc
+```
+
+### Versioning
+
+adocfmt uses Semantic Versioning. Note that any change to formatting output constitutes a breaking change (or at least a minor update), as it will impact `--check` builds in CI/CD pipelines.
 
 ## Project Info
 

@@ -133,6 +133,8 @@ public class AsciidocFormatter {
     applyFormatting(result, config::isNormalizeSetextHeadings, SetextHeadingsNormalizer::new);
     applyFormatting(result, config::isEnsureSourceDelimiters, SourceDelimiter::new);
     applyFormatting(result, config::isNormalizeBlockDelimiters, BlockNormalizer::new);
+    applyFormatting(
+        result, config::isFormatTables, linesList -> new TableNormalizer(linesList, config));
 
     PerLineTransformer perLineTransformer = new PerLineTransformer(result, config);
     perLineTransformer.run();

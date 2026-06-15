@@ -46,7 +46,7 @@ import picocli.CommandLine.Parameters;
 @Command(
     name = "adocfmt",
     mixinStandardHelpOptions = true,
-    version = "0.2.0",
+    version = "0.3.0",
     description = "An opinionated AsciiDoc formatter.")
 public class AsciidocFormatterCli implements Callable<Integer> {
 
@@ -127,6 +127,31 @@ public class AsciidocFormatterCli implements Callable<Integer> {
       description = "Ensure source delimiters. Default: ${DEFAULT-VALUE}")
   private boolean ensureSourceDelimiters;
 
+  @Option(
+      names = {"-ft", "--format-tables"},
+      defaultValue = "true",
+      description = "Format tables. Default: ${DEFAULT-VALUE}")
+  private boolean formatTables;
+
+  @Option(
+      names = {"-tl", "--table-layout"},
+      defaultValue = "AUTO",
+      description = "Table layout (AUTO, EXPANDED, PRESERVE). Default: ${DEFAULT-VALUE}")
+  private org.drjekyll.adocfmt.TableLayout tableLayout;
+
+  @Option(
+      names = {"-tmlw", "--table-max-line-width"},
+      defaultValue = "120",
+      description = "Max line width for tables. Default: ${DEFAULT-VALUE}")
+  private int tableMaxLineWidth;
+
+  @Option(
+      names = {"-tbl", "--table-blank-lines"},
+      defaultValue = "NONE",
+      description =
+          "Blank lines in tables (NONE, HEADER, ALL, PRESERVE). Default: ${DEFAULT-VALUE}")
+  private org.drjekyll.adocfmt.TableBlankLines tableBlankLines;
+
   @Parameters(description = "Files to format. If empty, reads from stdin.")
   private List<Path> files = new ArrayList<>();
 
@@ -206,7 +231,11 @@ public class AsciidocFormatterCli implements Callable<Integer> {
             .normalizeListBullets(normalizeListBullets)
             .normalizeOrderedListMarkers(normalizeOrderedListMarkers)
             .ensureHeadingBlankLines(ensureHeadingBlankLines)
-            .ensureSourceDelimiters(ensureSourceDelimiters);
+            .ensureSourceDelimiters(ensureSourceDelimiters)
+            .formatTables(formatTables)
+            .tableLayout(tableLayout)
+            .tableMaxLineWidth(tableMaxLineWidth)
+            .tableBlankLines(tableBlankLines);
     return builder.build();
   }
 

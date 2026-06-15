@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.drjekyll</groupId>
     <artifactId>adocfmt-parent</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
   </parent>
 
   <artifactId>adocfmt-cli</artifactId>
@@ -13,14 +13,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>info.picocli</groupId>
-      <artifactId>picocli</artifactId>
-      <version>4.7.7</version>
-    </dependency>
-    <dependency>
       <groupId>org.drjekyll</groupId>
       <artifactId>adocfmt</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>4.7.7</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -79,12 +79,12 @@
                 <minVersion>17</minVersion>
               </jre>
               <versionInfo>
-                <fileVersion>0.2.0.0</fileVersion>
-                <txtFileVersion>0.2.0</txtFileVersion>
+                <fileVersion>0.3.0.0</fileVersion>
+                <txtFileVersion>0.3.0</txtFileVersion>
                 <fileDescription>An opinionated AsciiDoc formatter.</fileDescription>
                 <copyright>Daniel Heid</copyright>
-                <productVersion>0.2.0.0</productVersion>
-                <txtProductVersion>0.2.0</txtProductVersion>
+                <productVersion>0.3.0.0</productVersion>
+                <txtProductVersion>0.3.0</txtProductVersion>
                 <productName>adocfmt</productName>
                 <internalName>adocfmt</internalName>
                 <originalFilename>adocfmt.exe</originalFilename>

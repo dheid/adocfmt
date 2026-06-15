@@ -40,10 +40,21 @@ public class BlockNormalizer implements Runnable {
       if (bt.isOpen()) {
         String closed = bt.tryClose(line);
         if (closed != null && !"`".equals(closed)) {
-          lines.set(i, closed.repeat(4));
+          if ("|".equals(closed)) {
+            if (line.length() > 4) {
+              lines.set(i, "|===");
+            }
+          } else {
+            lines.set(i, closed.repeat(4));
+          }
         }
       } else if (BlockDelimiter.isBlockDelimiter(line)) {
-        if (line.charAt(0) == '`') {
+        if (BlockDelimiter.isTableDelimiter(line)) {
+          if (line.length() > 4) {
+            lines.set(i, "|===");
+          }
+          bt.open(lines.get(i));
+        } else if (line.charAt(0) == '`') {
           bt.open(line);
         } else if (line.length() > 4) {
           String prev = i == 0 ? null : lines.get(i - 1);

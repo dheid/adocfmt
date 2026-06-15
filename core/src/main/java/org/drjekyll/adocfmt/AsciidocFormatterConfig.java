@@ -72,4 +72,16 @@ public class AsciidocFormatterConfig {
    * delimiters when they are missing.
    */
   boolean ensureSourceDelimiters;
+
+  /** Whether to format AsciiDoc tables. */
+  @Builder.Default boolean formatTables = true;
+
+  /** The layout to use for tables. */
+  @Builder.Default TableLayout tableLayout = TableLayout.AUTO;
+
+  /** The maximum line width for compact table layout. */
+  @Builder.Default int tableMaxLineWidth = 120;
+
+  /** The blank line mode for tables. */
+  @Builder.Default TableBlankLines tableBlankLines = TableBlankLines.NONE;
 }

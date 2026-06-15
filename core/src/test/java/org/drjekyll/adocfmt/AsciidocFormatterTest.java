@@ -74,6 +74,27 @@ class AsciidocFormatterTest {
   }
 
   @Test
+  void keepsCommentsInTables() throws UnsupportedLineEndingException {
+    String input =
+        "|===\n"
+            + "|Datum| Version |  Autor(en)kennung | Erläuterung\n"
+            + "// some comment\n"
+            + "|21.03.2026 | 1.0 | YI01623 |  Erstellung\n"
+            + "// another comment\n"
+            + "|===\n";
+    String expected =
+        "|===\n"
+            + "| Datum      | Version | Autor(en)kennung | Erläuterung\n"
+            + "// some comment\n"
+            + "| 21.03.2026 | 1.0     | YI01623          | Erstellung\n"
+            + "// another comment\n"
+            + "|===\n";
+    assertThat(new AsciidocFormatter(ALL_OPTIONS).format(input))
+        .as("protected regions must not be altered")
+        .isEqualTo(expected);
+  }
+
+  @Test
   void formatStringPreservesSemantics() throws UnsupportedLineEndingException {
     String input =
         "my document title\n=================\n\nFirst sentence. Second sentence here.\n";

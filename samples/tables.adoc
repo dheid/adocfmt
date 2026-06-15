@@ -1,0 +1,26 @@
+= Table Test
+
+[cols="1,1"]
+|===
+| A | B
+| Very long content here | C
+|===
+
+|===
+| Simple | Table
+| No | Cols
+|===
+
+.Title
+[options="header"]
+|===
+| Header 1 | Header 2
+| Row 1 Col 1 | Row 1 Col 2
+|===
+
+|===
+| Implicit Header
+| Followed by blank line
+
+| Body Row
+|===

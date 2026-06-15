@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-04
+
+### Added
+
+- **Table Formatting (on by default):** Support for formatting AsciiDoc tables.
+  - Automatically aligns cell content and pipe characters.
+  - Supports compact and expanded layouts.
+  - Preserves implicit and explicit headers.
+  - New configuration options: `formatTables`, `tableLayout`, `tableMaxLineWidth`, and `tableBlankLines`.
+  - Structural bail-out for complex tables (spans, block cells, nested tables) to guarantee identical rendering.
+
 ## [0.2.0] - 2026-06-04
 
 ### Added

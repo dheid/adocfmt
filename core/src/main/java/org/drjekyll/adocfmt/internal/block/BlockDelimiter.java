@@ -14,12 +14,34 @@ public class BlockDelimiter {
   private final String BLOCK_DELIMITER_CHARS = "-=.*_+/";
 
   /**
+   * Returns {@code true} if {@code line} is a table delimiter (|===).
+   *
+   * @param line the line to test; must not be {@code null}
+   * @return {@code true} if the line consists of a pipe followed by three or more equals signs
+   */
+  public boolean isTableDelimiter(CharSequence line) {
+    int len = line.length();
+    if (len < 4 || line.charAt(0) != '|') {
+      return false;
+    }
+    for (int i = 1; i < len; i++) {
+      if (line.charAt(i) != '=') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Returns {@code true} if {@code line} is a block delimiter.
    *
    * @param line the line to test; must not be {@code null}
    * @return {@code true} if the line consists of four or more identical delimiter characters
    */
   public boolean isBlockDelimiter(CharSequence line) {
+    if (isTableDelimiter(line)) {
+      return true;
+    }
     int len = line.length();
     if (len < 3) {
       return false;

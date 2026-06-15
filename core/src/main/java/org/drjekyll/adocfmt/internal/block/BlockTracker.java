@@ -55,6 +55,15 @@ public class BlockTracker {
    *     line does not match
    */
   public String tryClose(CharSequence line) {
+    if (delimChar == '|') {
+      if (line.length() >= 4
+          && line.charAt(0) == '|'
+          && isAllSameChar(line.subSequence(1, line.length()), '=')) {
+        delimChar = '\0';
+        return "|";
+      }
+      return null;
+    }
     int minLen = delimChar == '`' ? 3 : 4;
     if (delimChar != '\0' && line.length() >= minLen && isAllSameChar(line, delimChar)) {
       String closed = String.valueOf(delimChar);
