@@ -16,6 +16,7 @@
 package org.drjekyll.adocfmt.internal;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.drjekyll.adocfmt.internal.block.BlockDelimiter;
@@ -33,6 +34,8 @@ import org.drjekyll.adocfmt.internal.setext.SetextUnderlineDetector;
 @RequiredArgsConstructor
 public class OneSentencePerLineApplier implements Runnable {
   private static final Pattern MULTI_WHITESPACE = Pattern.compile("\\s+");
+  private static final Pattern DESCRIPTION_LIST =
+      Pattern.compile("^[a-zA-Z0-9_]+[a-zA-Z0-9_\t ]+(:{2,4}|;;)[a-zA-Z0-9_\t ]*$");
 
   private final List<String> lines;
 
@@ -393,7 +396,7 @@ public class OneSentencePerLineApplier implements Runnable {
           && line.charAt(i) == '.'
           && (line.charAt(i + 1) == ' ' || line.charAt(i + 1) == '\t');
     }
-    return isBlockMacroOrTerm(line);
+    return isBlockMacroOrTerm(line) || isDescriptionList(line);
   }
 
   private static boolean isBlockMacroOrTerm(CharSequence line) {
@@ -408,5 +411,13 @@ public class OneSentencePerLineApplier implements Runnable {
       }
     }
     return i > 0 && i + 1 < len && line.charAt(i) == ':' && line.charAt(i + 1) == ':';
+  }
+
+  private static boolean isDescriptionList(String line) {
+    if (line.contains("::") || line.contains(";;")) {
+      Matcher matcher = DESCRIPTION_LIST.matcher(line);
+      return matcher.find();
+    }
+    return false;
   }
 }
