@@ -417,4 +417,10 @@ and continue typing on the next line.
     // c>='0'&&c<='9' branch in isBlockMacroOrTerm
     assertThat(OneSentencePerLineApplier.isSpecialLine("macro2::")).isTrue();
   }
+
+  @Test
+  void isDescriptionListIsTrue() {
+    assertThat(OneSentencePerLineApplier.isSpecialLine("A description List:: With values"))
+        .isTrue();
+  }
 }
