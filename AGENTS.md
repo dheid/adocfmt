@@ -65,13 +65,13 @@ is, in order of authority:
 **For any new feature, draft a `spec_draft.md`** (scratch, not committed) containing:
 - **User Story:** who wants this and why.
 - **Given/When/Then acceptance criteria**, expressed in terms of Before/After AsciiDoc snippets
-  (matching the README's existing style) — this project's natural "Given/When/Then" is literal
-  input/output text.
+(matching the README's existing style) — this project's natural "Given/When/Then" is literal
+input/output text.
 - **Data Contract:** exact new/changed field(s) on `AsciidocFormatterConfig` and/or new CLI
-  flag(s) (long + short alias, default value), matching the existing table conventions in
-  `README.md`.
+flag(s) (long + short alias, default value), matching the existing table conventions in
+`README.md`.
 - **Invariant impact:** explicitly confirm the change preserves idempotence, protected regions,
-  and semantic equivalence, or explain why an exception is justified.
+and semantic equivalence, or explain why an exception is justified.
 
 Pause after drafting and wait for human review before writing any implementation code.
 
@@ -109,58 +109,59 @@ HTML-equivalence assertions), JUnit 5 + AssertJ (testing).
 
 **Commands:**
 - Build everything and run the full test suite: `mvn clean install` (or `mvn -B verify`, as CI
-  does — this is the command that must pass before any task is considered done).
+does — this is the command that must pass before any task is considered done).
 - Run a single module's tests: `mvn -pl core test` / `mvn -pl cli test`.
 - Run the built CLI: `java -jar cli/target/adocfmt.jar --help`.
 - Formatting (Java via Google Java Format, `pom.xml` via sortPom, Markdown via flexmark) is
-  auto-applied by the Spotless plugin during `process-sources` — running `mvn verify` both
-  formats and builds. There is no separate "check" formatting step to invoke manually; just run
-  the build.
+auto-applied by the Spotless plugin during `process-sources` — running `mvn verify` both
+formats and builds. There is no separate "check" formatting step to invoke manually; just run
+the build.
 - Coverage: JaCoCo instruments `core` during the build; CI enforces **80% minimum coverage**
-  overall and on changed files (`.github/workflows/ci.yml`). New code must not drop coverage
-  below this threshold.
+overall and on changed files (`.github/workflows/ci.yml`). New code must not drop coverage
+below this threshold.
 
 **Architectural patterns:**
 - Each transformation is its own small, single-responsibility class under
-  `core/.../internal/` (e.g. `TrailingWhitespaceRemover`, `TitleCaseTransformer`,
-  `BlankLinesCollapser`), composed together in `AsciidocFormatter`. Follow this pattern for new
-  transformations rather than adding branches to an existing class.
+`core/.../internal/` (e.g. `TrailingWhitespaceRemover`, `TitleCaseTransformer`,
+`BlankLinesCollapser`), composed together in `AsciidocFormatter`. Follow this pattern for new
+transformations rather than adding branches to an existing class.
 - Configuration is immutable and built via the Lombok `@Builder` pattern on
-  `AsciidocFormatterConfig`; new options are added as new builder fields with an explicit
-  default, mirrored as a new CLI flag (long name + short alias) in `AsciidocFormatterCli`.
+`AsciidocFormatterConfig`; new options are added as new builder fields with an explicit
+default, mirrored as a new CLI flag (long name + short alias) in `AsciidocFormatterCli`.
 - Tests favor **fixture-file pairs** (Before/After `.adoc` files) exercised through
-  `AsciidocFormatterTestSupport`, plus AsciidoctorJ-based semantic-equivalence checks, over
-  large inline string literals.
+`AsciidocFormatterTestSupport`, plus AsciidoctorJ-based semantic-equivalence checks, over
+large inline string literals.
 
 **Prohibited patterns:**
 - No new runtime dependencies added to `core` without explicit user approval (zero-dependency
-  philosophy).
+philosophy).
 - No transformation that mutates content inside `----`, `....`, `++++`, `////`, or comment/
-  directive regions.
+directive regions.
 - No non-idempotent transformation (`format(format(x))` must equal `format(x)`).
 - No breaking change to `AsciidocFormatterConfig`, CLI flags, or default formatting output
-  without explicit prior approval and a documented rationale (this is a SemVer-significant
-  change per `README.md`).
+without explicit prior approval and a documented rationale (this is a SemVer-significant
+change per `README.md`).
 - No hardcoded secrets, credentials, or machine-specific paths.
 - No unhandled checked exceptions swallowed silently — follow the existing pattern of narrow,
-  well-named exception types (e.g. `UnsupportedLineEndingException`).
+well-named exception types (e.g. `UnsupportedLineEndingException`).
 
 ## 6. Definition of Done (DoD)
 
 A task is considered complete ONLY when:
 
 - [ ] A specification (`spec_draft.md`, or an update to `README.md`'s Code Style section) was
-      drafted and approved by the user before implementation began, for any behavior-affecting
-      change.
+  drafted and approved by the user before implementation began, for any behavior-affecting
+  change.
 - [ ] Implementation covers 100% of the spec's acceptance criteria, expressed as passing
-      Before/After fixtures and/or unit tests.
+  Before/After fixtures and/or unit tests.
 - [ ] `mvn -B verify` passes locally with zero test failures, zero Spotless violations, and
-      coverage at or above 80% overall and on changed files.
+  coverage at or above 80% overall and on changed files.
 - [ ] Idempotence, protected-region safety, semantic HTML equivalence, and trailing-newline
-      invariants are preserved (verified by tests, not assumed).
+  invariants are preserved (verified by tests, not assumed).
 - [ ] `README.md` (Code Style / CLI options tables) and `CHANGELOG.md` are updated if the change
-      is user-visible.
+  is user-visible.
 - [ ] No git commits, stages, or pushes were executed by the agent.
 - [ ] No temporary files, debug output, commented-out code, or scratch spec drafts remain in
-      the codebase (scratch `spec_draft.md` files are working documents, not deliverables —
-      remove them once the corresponding spec has been folded into `README.md`/fixtures).
+  the codebase (scratch `spec_draft.md` files are working documents, not deliverables —
+  remove them once the corresponding spec has been folded into `README.md`/fixtures).
+
