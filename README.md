@@ -393,7 +393,7 @@ Add the following to your `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/dheid/adocfmt
-    rev: v0.2.0
+    rev: v0.3.0
     hooks:
       - id: adocfmt        # formats .adoc/.asciidoc files in place
       - id: adocfmt-check  # CI mode: fails if any file would change
@@ -423,7 +423,7 @@ Directories are walked recursively.
 ```yaml
 steps:
   - uses: actions/checkout@v6
-  - uses: dheid/adocfmt@v0.2.0
+  - uses: dheid/adocfmt@v0.3.0
     with:
       mode: check    # default — can be omitted
       paths: .       # default — whole repo
@@ -439,7 +439,7 @@ or [peter-evans/create-pull-request](https://github.com/peter-evans/create-pull-
 ```yaml
 steps:
   - uses: actions/checkout@v6
-  - uses: dheid/adocfmt@v0.2.0
+  - uses: dheid/adocfmt@v0.3.0
     with:
       mode: write
       paths: docs     # limit to a subdirectory
@@ -452,7 +452,7 @@ steps:
 |-----------|---------|--------------------------------------------------------------------------|
 | `mode`    | `check` | `check` or `write`                                                       |
 | `paths`   | `.`     | Space-separated files or directories; directories are walked recursively |
-| `version` | `0.2.0` | adocfmt version to download; override to pin to a specific release       |
+| `version` | `0.3.0` | adocfmt version to download; override to pin to a specific release       |
 
 **Notes:**
 
