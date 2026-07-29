@@ -147,7 +147,7 @@ public class AsciidocFormatterCli implements Callable<Integer> {
 
   @Option(
       names = {"-tbl", "--table-blank-lines"},
-      defaultValue = "NONE",
+      defaultValue = "ALL",
       description =
           "Blank lines in tables (NONE, HEADER, ALL, PRESERVE). Default: ${DEFAULT-VALUE}")
   private org.drjekyll.adocfmt.TableBlankLines tableBlankLines;

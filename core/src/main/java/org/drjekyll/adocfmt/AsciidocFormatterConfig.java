@@ -83,5 +83,5 @@ public class AsciidocFormatterConfig {
   @Builder.Default int tableMaxLineWidth = 120;
 
   /** The blank line mode for tables. */
-  @Builder.Default TableBlankLines tableBlankLines = TableBlankLines.NONE;
+  @Builder.Default TableBlankLines tableBlankLines = TableBlankLines.ALL;
 }

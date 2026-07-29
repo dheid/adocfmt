@@ -328,7 +328,7 @@ Usage: adocfmt [-chVw] [-cbl[=<true|false>]] [-ehlb[=<true|false>]]
 | `-ft`, `--format-tables`                    | `true`  | Format AsciiDoc tables                                                    |
 | `-tl`, `--table-layout`                     | `AUTO`  | Table layout (AUTO, EXPANDED, PRESERVE)                                   |
 | `-tmlw`, `--table-max-line-width`           | `120`   | Max line width for tables                                                 |
-| `-tbl`, `--table-blank-lines`               | `NONE`  | Blank lines in tables (NONE, HEADER, ALL, PRESERVE)                       |
+| `-tbl`, `--table-blank-lines`               | `ALL`   | Blank lines in tables (NONE, HEADER, ALL, PRESERVE)                       |
 | `-tc`, `--title-case`                       | `false` | Apply title case to headings                                              |
 | `-nlb`, `--normalize-list-bullets`          | `false` | Normalise list bullets to `*`                                             |
 | `-nolm`, `--normalize-ordered-list-markers` | `false` | Replace explicit numbers with `.`                                         |

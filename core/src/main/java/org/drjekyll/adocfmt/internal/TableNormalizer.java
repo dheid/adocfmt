@@ -2,6 +2,7 @@ package org.drjekyll.adocfmt.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.drjekyll.adocfmt.AsciidocFormatterConfig;
@@ -15,6 +16,8 @@ import org.drjekyll.adocfmt.internal.block.BlockTracker;
 public class TableNormalizer implements Runnable {
 
   private static final Pattern TITLE_PATTERN = Pattern.compile("^\\..*\\s*$");
+  private static final Pattern COLS_ATTRIBUTE_PATTERN =
+      Pattern.compile("cols\\s*=\\s*\"([^\"]*)\"");
 
   private final List<String> lines;
   private final AsciidocFormatterConfig config;
@@ -62,6 +65,7 @@ public class TableNormalizer implements Runnable {
     // Header preservation invariant detection
     boolean explicitHeader = false;
     boolean hasCols = false;
+    int numColsHint = 0;
     if (start > 0) {
       int p = start - 1;
       if (p >= 0 && TITLE_PATTERN.matcher(lines.get(p)).matches()) {
@@ -75,12 +79,13 @@ public class TableNormalizer implements Runnable {
           }
           if (attrLine.contains("cols=")) {
             hasCols = true;
+            numColsHint = extractNumCols(attrLine);
           }
         }
       }
     }
 
-    List<String> formattedTable = formatTable(tableLines, explicitHeader, hasCols);
+    List<String> formattedTable = formatTable(tableLines, explicitHeader, hasCols, numColsHint);
     if (formattedTable != null) {
       int originalSize = end - start + 1;
       for (int i = 0; i < Math.min(originalSize, formattedTable.size()); i++) {
@@ -120,9 +125,21 @@ public class TableNormalizer implements Runnable {
     return false;
   }
 
+  private int extractNumCols(String attrLine) {
+    Matcher matcher = COLS_ATTRIBUTE_PATTERN.matcher(attrLine);
+    if (!matcher.find()) {
+      return 0;
+    }
+    String colsSpec = matcher.group(1);
+    if (colsSpec.isBlank()) {
+      return 0;
+    }
+    return colsSpec.split(",").length;
+  }
+
   private List<String> formatTable(
-      List<String> tableLines, boolean explicitHeader, boolean hasCols) {
-    Table table = parseTable(tableLines);
+      List<String> tableLines, boolean explicitHeader, boolean hasCols, int numColsHint) {
+    Table table = parseTable(tableLines, numColsHint);
     if (table == null || table.elements.isEmpty()) {
       return null;
     }
@@ -158,7 +175,8 @@ public class TableNormalizer implements Runnable {
         }
         maxRowWidth = Math.max(maxRowWidth, rowWidth);
       }
-      if (maxRowWidth > config.getTableMaxLineWidth() && hasCols) {
+      boolean anyRowSpansMultipleLines = rows.stream().anyMatch(r -> r.spansMultipleLines);
+      if ((maxRowWidth > config.getTableMaxLineWidth() || anyRowSpansMultipleLines) && hasCols) {
         layout = TableLayout.EXPANDED;
       } else {
         layout = TableLayout.AUTO;
@@ -173,6 +191,8 @@ public class TableNormalizer implements Runnable {
     result.add(tableLines.get(0));
 
     int rowIndex = 0;
+    boolean headerPhaseActive = explicitHeader;
+    int headerCellsAccumulated = 0;
     for (int i = 0; i < table.elements.size(); i++) {
       TableElement element = table.elements.get(i);
       if (element instanceof CommentLine commentLine) {
@@ -187,6 +207,20 @@ public class TableNormalizer implements Runnable {
         }
       } else {
         result.add(formatCompactRow(row, colWidths, specWidths));
+      }
+
+      // An explicit header row can be spread across multiple source lines (one cell per
+      // line). While the accumulated cell count hasn't reached numCols yet, the header is
+      // still "open" and the blank line that would normally follow this row must be
+      // suppressed since it would otherwise split the header row itself.
+      boolean headerStillOpenAfterThisRow = false;
+      if (headerPhaseActive) {
+        headerCellsAccumulated += row.cells.size();
+        if (headerCellsAccumulated < numCols) {
+          headerStillOpenAfterThisRow = true;
+        } else {
+          headerPhaseActive = false;
+        }
       }
 
       if (rowIndex < rows.size() - 1) {
@@ -208,6 +242,10 @@ public class TableNormalizer implements Runnable {
 
           if (!explicitHeader && rowIndex == 0) {
             shouldAddBlankLine = table.hasImplicitHeaderAfterFirstRow;
+          }
+
+          if (headerStillOpenAfterThisRow) {
+            shouldAddBlankLine = false;
           }
 
           if (shouldAddBlankLine) {
@@ -253,21 +291,26 @@ public class TableNormalizer implements Runnable {
     return sb.toString();
   }
 
-  private Table parseTable(List<String> tableLines) {
+  private Table parseTable(List<String> tableLines, int numColsHint) {
     Table table = new Table();
     Row currentRow = null;
+    int linesContributedToCurrentRow = 0;
 
     for (int i = 1; i < tableLines.size() - 1; i++) {
       String line = tableLines.get(i);
       String trimmed = line.trim();
 
       if (trimmed.isBlank()) {
-        if (currentRow != null) {
+        // A blank line is purely cosmetic: it only ends the current row once that row
+        // already holds a full set of cells. Otherwise a row spread across multiple
+        // physical lines (with cosmetic blank lines in between) would get split apart.
+        if (currentRow != null && (numColsHint <= 0 || currentRow.cells.size() >= numColsHint)) {
           table.elements.add(currentRow);
           if (table.getRows().size() == 1) {
             table.hasImplicitHeaderAfterFirstRow = true;
           }
           currentRow = null;
+          linesContributedToCurrentRow = 0;
         }
         continue;
       }
@@ -276,6 +319,7 @@ public class TableNormalizer implements Runnable {
         if (currentRow != null) {
           table.elements.add(currentRow);
           currentRow = null;
+          linesContributedToCurrentRow = 0;
         }
         table.elements.add(new CommentLine(line));
         continue;
@@ -288,13 +332,25 @@ public class TableNormalizer implements Runnable {
           trimmed.startsWith("|")
               || (!trimmed.isEmpty() && isSpecifierChar(trimmed.charAt(0)) && line.contains("|"));
 
-      if (startsWithCellStart || currentRow == null) {
+      boolean shouldStartNewRow;
+      if (numColsHint > 0) {
+        shouldStartNewRow = currentRow == null || currentRow.cells.size() >= numColsHint;
+      } else {
+        shouldStartNewRow = startsWithCellStart || currentRow == null;
+      }
+
+      if (shouldStartNewRow) {
         if (currentRow != null) {
           table.elements.add(currentRow);
         }
         currentRow = new Row();
+        linesContributedToCurrentRow = 0;
       }
       currentRow.cells.addAll(cellsInLine);
+      linesContributedToCurrentRow++;
+      if (linesContributedToCurrentRow > 1) {
+        currentRow.spansMultipleLines = true;
+      }
     }
     if (currentRow != null) {
       table.elements.add(currentRow);
@@ -348,7 +404,7 @@ public class TableNormalizer implements Runnable {
   }
 
   private boolean isSpecifierChar(char c) {
-    return "<>=^.0123456789,".indexOf(c) >= 0;
+    return "<>=^.".indexOf(c) >= 0;
   }
 
   private interface TableElement {}
@@ -364,6 +420,7 @@ public class TableNormalizer implements Runnable {
 
   private static class Row implements TableElement {
     final List<Cell> cells = new ArrayList<>();
+    boolean spansMultipleLines = false;
   }
 
   @RequiredArgsConstructor

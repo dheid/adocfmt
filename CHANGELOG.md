@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Automatically aligns cell content and pipe characters.
   - Supports compact and expanded layouts.
   - Preserves implicit and explicit headers.
-  - New configuration options: `formatTables`, `tableLayout`, `tableMaxLineWidth`, and `tableBlankLines`.
+  - New configuration options: `formatTables`, `tableLayout`, `tableMaxLineWidth`, and `tableBlankLines` (defaults to `ALL`).
   - Structural bail-out for complex tables (spans, block cells, nested tables) to guarantee identical rendering.
 
 ## [0.2.0] - 2026-06-04

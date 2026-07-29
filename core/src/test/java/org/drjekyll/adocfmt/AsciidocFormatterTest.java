@@ -148,8 +148,8 @@ class AsciidocFormatterTest {
   @Test
   void someOptionsEnabled() throws Exception {
     testResource(
-        "fixtures/asciidocBefore.adoc",
-        "fixtures/asciidocAfter.adoc",
+        "fixtures/options/customOptionsBefore.adoc",
+        "fixtures/options/customOptionsAfter.adoc",
         AsciidocFormatterConfig.builder()
             .normalizeSetextHeadings(true)
             .oneSentencePerLine(true)
@@ -161,9 +161,23 @@ class AsciidocFormatterTest {
   @Test
   void allOptionsEnabled() throws Exception {
     testResource(
-        "fixtures/asciidocAllOptionsBefore.adoc",
-        "fixtures/asciidocAllOptionsAfter.adoc",
+        "fixtures/options/allOptionsBefore.adoc",
+        "fixtures/options/allOptionsAfter.adoc",
         ALL_OPTIONS);
+  }
+
+  @Test
+  void longTableFormatting() throws Exception {
+    testResource(
+        "fixtures/table/longTableBefore.adoc", "fixtures/table/longTableAfter.adoc", ALL_OPTIONS);
+  }
+
+  @Test
+  void blankLinesFormatting() throws Exception {
+    testResource(
+        "fixtures/table/blankLinesBefore.adoc",
+        "fixtures/table/blankLinesAfter.adoc",
+        AsciidocFormatterConfig.builder().build());
   }
 
   // -------------------------------------------------------------------------
