@@ -253,3 +253,6 @@ One more thing.
 Happy documenting!
 
 [[google]]When all else fails, head over to <http://google.com>.
+
+First term:: The description can be placed on the same line
+Second term:: The description can be placed on the same line
