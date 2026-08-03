@@ -13,7 +13,7 @@ inputs:
     default: '.'
   version:
     description: adocfmt version to download and run.
-    default: '0.3.0'
+    default: '0.3.1'
 
 runs:
   using: composite

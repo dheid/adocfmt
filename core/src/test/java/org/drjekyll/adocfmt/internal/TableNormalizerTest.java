@@ -77,6 +77,12 @@ class TableNormalizerTest {
   }
 
   @Test
+  void bailsOutOnInclude() {
+    String input = "|===\n| Cell 1 | Cell 2\ninclude::foo.adoc[]\n| Cell 3 | Cell 4\n|===";
+    verify(input, input);
+  }
+
+  @Test
   void expandsTableWhenAutoLayoutExceedsWidth() {
     String input = "[cols=\"1,1\"]\n|===\n| Short | Long content\n|===";
     AsciidocFormatterConfig config =

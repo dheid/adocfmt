@@ -117,6 +117,9 @@ public class TableNormalizer implements Runnable {
       if (line.contains("!===")) {
         return true;
       }
+      if (line.trim().startsWith("include::")) {
+        return true;
+      }
       if (spanOrBlockPattern.matcher(line).find()) {
         return true;
       }

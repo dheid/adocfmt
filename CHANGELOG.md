@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-08-03
+
+### Fixed
+
+- Table normalizer now bails out (leaves table unchanged) when `include::` directives are found inside a table, preventing incorrect formatting of tables that include external content.
+
 ## [0.3.0] - 2026-06-04
 
 ### Added
@@ -14,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Supports compact and expanded layouts.
   - Preserves implicit and explicit headers.
   - New configuration options: `formatTables`, `tableLayout`, `tableMaxLineWidth`, and `tableBlankLines` (defaults to `ALL`).
-  - Structural bail-out for complex tables (spans, block cells, nested tables) to guarantee identical rendering.
+  - Structural bail-out for complex tables (spans, block cells, nested tables, include directives) to guarantee identical rendering.
 
 ## [0.2.0] - 2026-06-04
 

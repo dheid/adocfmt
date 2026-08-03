@@ -46,6 +46,8 @@ class AsciidocFormatterTest {
           .normalizeOrderedListMarkers(true)
           .ensureHeadingBlankLines(true)
           .ensureSourceDelimiters(true)
+          .tableBlankLines(TableBlankLines.ALL)
+          .tableLayout(TableLayout.AUTO)
           .build();
 
   // -------------------------------------------------------------------------
@@ -178,6 +180,14 @@ class AsciidocFormatterTest {
         "fixtures/table/blankLinesBefore.adoc",
         "fixtures/table/blankLinesAfter.adoc",
         AsciidocFormatterConfig.builder().build());
+  }
+
+  @Test
+  void keepsIncludes() throws Exception {
+    testResource(
+        "fixtures/table/includesInTables.adoc",
+        "fixtures/table/includesInTables.adoc",
+        ALL_OPTIONS);
   }
 
   // -------------------------------------------------------------------------
