@@ -36,6 +36,8 @@ public class OneSentencePerLineApplier implements Runnable {
   private static final Pattern MULTI_WHITESPACE = Pattern.compile("\\s+");
   private static final Pattern DESCRIPTION_LIST =
       Pattern.compile("^[a-zA-Z0-9_]+[a-zA-Z0-9_\t ]+(:{2,4}|;;)[a-zA-Z0-9_\t ]*$");
+  // Mirrors Asciidoctor's CalloutListRx.
+  private static final Pattern CALLOUT_LIST = Pattern.compile("^<(\\d+|\\.)>[ \t]+\\S");
 
   private final List<String> lines;
 
@@ -358,6 +360,9 @@ public class OneSentencePerLineApplier implements Runnable {
     }
     char first = line.charAt(0);
     if (first == '=' || first == '[' || first == '|' || first == ' ' || first == '\t') {
+      return true;
+    }
+    if (first == '<' && CALLOUT_LIST.matcher(line).find()) {
       return true;
     }
     if (line.startsWith("//")
