@@ -142,6 +142,17 @@ and continue typing on the next line.
   }
 
   @Test
+  void doesNotTouchCalloutListItems() {
+    String input = "<1> First callout. Still callout.\n<2> Second callout.\n<.> Auto-numbered.\n";
+    assertThat(apply(input)).isEqualTo(input);
+  }
+
+  @Test
+  void calloutWithoutTextIsNotSpecialLine() {
+    assertThat(OneSentencePerLineApplier.isSpecialLine("<1>")).isFalse();
+  }
+
+  @Test
   void doesNotReformatInsideListingBlock() {
     String input = "----\nFirst sentence. Second sentence.\n----\n";
     assertThat(apply(input)).isEqualTo(input);
