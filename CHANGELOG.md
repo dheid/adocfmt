@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `--normalize-list-bullets` no longer rewrites a `- ` line that continues a paragraph to `* `, which changed the rendered text (#38). A `- ` line is only treated as a bullet where a list can start (after a blank line, heading, block attribute, block title or delimited block) or inside an existing list.
+
 ## [0.3.1] - 2026-08-03
 
 ### Fixed
