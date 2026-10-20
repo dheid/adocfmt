@@ -110,6 +110,20 @@ class AsciidocFormatterTest {
   }
 
   @Test
+  void formatStringPreservesCalloutSemantics() throws UnsupportedLineEndingException {
+    String input =
+        "[source,ruby]\n----\nrequire 'sinatra' <1>\nget '/hi' do <2>\n----\n"
+            + "<1> Library import\n<2> URL mapping\n";
+    String output = new AsciidocFormatter(ALL_OPTIONS).format(input);
+    assertThat(output).isEqualTo(input);
+    try (Asciidoctor asciidoctor = Asciidoctor.Factory.create()) {
+      Options options = Options.builder().safe(SafeMode.SAFE).standalone(false).build();
+      assertThat(normalizeHtml(asciidoctor.convert(output, options)))
+          .isEqualTo(normalizeHtml(asciidoctor.convert(input, options)));
+    }
+  }
+
+  @Test
   void formatStringPreservesCrlfLineEndings() throws UnsupportedLineEndingException {
     AsciidocFormatter formatter =
         new AsciidocFormatter(
