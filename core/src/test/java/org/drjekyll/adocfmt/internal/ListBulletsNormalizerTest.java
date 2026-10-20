@@ -73,6 +73,34 @@ class ListBulletsNormalizerTest {
   }
 
   @Test
+  void dashLineContinuingParagraphUnchanged() {
+    String input =
+        "Lorem ipsum dolor sit amet\n- consectetur adipiscing elit, sed do eiusmod tempor.\n";
+    assertThat(apply(input)).isEqualTo(input);
+  }
+
+  @Test
+  void dashListAfterBlankLineConverted() {
+    assertThat(apply("Paragraph\n\n- one\n- two")).isEqualTo("Paragraph\n\n* one\n* two\n");
+  }
+
+  @Test
+  void dashListAfterBlockAttributeAndTitleConverted() {
+    assertThat(apply("Paragraph\n\n[square]\n.Title\n- one"))
+        .isEqualTo("Paragraph\n\n[square]\n.Title\n* one\n");
+  }
+
+  @Test
+  void dashListDirectlyAfterHeadingConverted() {
+    assertThat(apply("== Section\n- one")).isEqualTo("== Section\n* one\n");
+  }
+
+  @Test
+  void dashItemAfterWrappedItemTextConverted() {
+    assertThat(apply("- one\nwrapped text\n- two")).isEqualTo("* one\nwrapped text\n* two\n");
+  }
+
+  @Test
   void listBulletsNormalizationIsIdempotent() {
     String input = "- one\n- two";
     String once = apply(input);
