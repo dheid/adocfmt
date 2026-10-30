@@ -46,7 +46,7 @@ import picocli.CommandLine.Parameters;
 @Command(
     name = "adocfmt",
     mixinStandardHelpOptions = true,
-    version = "0.3.1",
+    version = "0.3.2",
     description = "An opinionated AsciiDoc formatter.")
 public class AsciidocFormatterCli implements Callable<Integer> {
 
