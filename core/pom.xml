@@ -15,7 +15,7 @@
     <dependency>
       <groupId>com.ibm.icu</groupId>
       <artifactId>icu4j</artifactId>
-      <version>78.3</version>
+      <version>79.1</version>
     </dependency>
     <dependency>
       <groupId>org.jspecify</groupId>
@@ -52,7 +52,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.15</version>
+        <version>0.8.16</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
