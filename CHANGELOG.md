@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- One-sentence-per-line no longer joins callout list items (`<1> …`, `<.> …`) into a single paragraph, which broke their rendering.
 - `--normalize-list-bullets` no longer rewrites a `- ` line that continues a paragraph to `* `, which changed the rendered text (#38). A `- ` line is only treated as a bullet where a list can start (after a blank line, heading, block attribute, block title or delimited block) or inside an existing list.
 
 ## [0.3.1] - 2026-08-03
