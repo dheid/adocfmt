@@ -204,6 +204,22 @@ class AsciidocFormatterTest {
         ALL_OPTIONS);
   }
 
+  @Test
+  void keepsCellContinuationLines() throws Exception {
+    testResource(
+        "fixtures/table/continuationLines.adoc",
+        "fixtures/table/continuationLines.adoc",
+        AsciidocFormatterConfig.builder().build());
+  }
+
+  @Test
+  void keepsPreprocessorDirectivesInTables() throws Exception {
+    testResource(
+        "fixtures/table/preprocessorDirectives.adoc",
+        "fixtures/table/preprocessorDirectives.adoc",
+        AsciidocFormatterConfig.builder().build());
+  }
+
   // -------------------------------------------------------------------------
   // format(CharSequence)
   // -------------------------------------------------------------------------
