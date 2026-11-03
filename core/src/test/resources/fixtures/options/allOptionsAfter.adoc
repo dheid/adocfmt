@@ -105,8 +105,7 @@ definition line two
 This should be a standalone paragraph, not grabbed by the definition list.
 
 [[nested]]
-* first level
-written on two lines
+* first level written on two lines
 * first level
 +
 ....

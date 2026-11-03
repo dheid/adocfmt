@@ -28,8 +28,9 @@ import org.drjekyll.adocfmt.internal.setext.SetextUnderlineDetector;
  *
  * <p>Consecutive non-blank, non-special lines are joined into a single paragraph string and then
  * split at sentence boundaries. Common English and German abbreviations are recognised to avoid
- * spurious splits. Lines inside delimited blocks, list items, headings, and other structural
- * AsciiDoc elements are passed through unchanged.
+ * spurious splits. A list item is reflowed like a paragraph whose first line starts with the list
+ * marker. Lines inside delimited blocks, headings, and other structural AsciiDoc elements are
+ * passed through unchanged.
  */
 @RequiredArgsConstructor
 public class OneSentencePerLineApplier implements Runnable {
@@ -38,6 +39,10 @@ public class OneSentencePerLineApplier implements Runnable {
       Pattern.compile("^[a-zA-Z0-9_]+[a-zA-Z0-9_\t ]+(:{2,4}|;;)[a-zA-Z0-9_\t ]*$");
   // Mirrors Asciidoctor's CalloutListRx.
   private static final Pattern CALLOUT_LIST = Pattern.compile("^<(\\d+|\\.)>[ \t]+\\S");
+  // A list marker and the whitespace after it, as in "* ", "** ", ". ", "- " or "1. ".
+  private static final Pattern LIST_ITEM_MARKER =
+      Pattern.compile("^(?:\\*{1,5}|\\.{1,5}|-|\\d+\\.)[ \t]+");
+  private static final Pattern CHECKLIST_BOX = Pattern.compile("^\\[[ xX*]][ \t]");
 
   private final List<String> lines;
 
@@ -213,7 +218,7 @@ public class OneSentencePerLineApplier implements Runnable {
   /** Performs the one-sentence-per-line transformation. */
   public void run() {
     Collection<String> result = new ArrayList<>(lines.size());
-    Collection<String> paragraphBuffer = new ArrayList<>();
+    List<String> paragraphBuffer = new ArrayList<>();
     BlockTracker bt = new BlockTracker();
 
     for (int i = 0; i < lines.size(); i++) {
@@ -241,6 +246,12 @@ public class OneSentencePerLineApplier implements Runnable {
         continue;
       }
 
+      if (isReflowableListItem(line)) {
+        flushParagraph(paragraphBuffer, result);
+        paragraphBuffer.add(line);
+        continue;
+      }
+
       if (line.isBlank() || isSpecialLine(line)) {
         flushParagraph(paragraphBuffer, result);
         result.add(line);
@@ -255,13 +266,53 @@ public class OneSentencePerLineApplier implements Runnable {
     lines.addAll(result);
   }
 
-  private static void flushParagraph(Collection<String> buffer, Collection<String> result) {
+  // Hard line breaks, checklists and thematic breaks ("* * *") stay special lines.
+  private static boolean isReflowableListItem(String line) {
+    Matcher marker = LIST_ITEM_MARKER.matcher(line);
+    if (!marker.find() || line.endsWith(" +")) {
+      return false;
+    }
+    String text = line.substring(marker.end());
+    return !text.isBlank()
+        && !LIST_ITEM_MARKER.matcher(text).find()
+        && !CHECKLIST_BOX.matcher(text).find();
+  }
+
+  private static void flushParagraph(List<String> buffer, Collection<String> result) {
     if (buffer.isEmpty()) {
       return;
     }
+    // Reflow a list item like a paragraph, then put the marker back on the first line.
+    Matcher marker = LIST_ITEM_MARKER.matcher(buffer.get(0));
+    boolean listItem = marker.find();
+    if (listItem) {
+      buffer.set(0, buffer.get(0).substring(marker.end()));
+    }
     String joined = MULTI_WHITESPACE.matcher(String.join(" ", buffer)).replaceAll(" ").trim();
-    result.addAll(splitIntoSentences(joined));
+    List<String> sentences = splitIntoSentences(joined);
+    if (listItem) {
+      sentences = keepListMarkersInline(sentences);
+      result.add(marker.group() + sentences.get(0));
+      result.addAll(sentences.subList(1, sentences.size()));
+    } else {
+      result.addAll(sentences);
+    }
     buffer.clear();
+  }
+
+  // Inside a list item, a line starting with a list marker starts a new item, so keep such a
+  // sentence on the line before.
+  private static List<String> keepListMarkersInline(List<String> sentences) {
+    List<String> merged = new ArrayList<>(sentences.size());
+    for (String sentence : sentences) {
+      if (!merged.isEmpty() && LIST_ITEM_MARKER.matcher(sentence).find()) {
+        int last = merged.size() - 1;
+        merged.set(last, merged.get(last) + " " + sentence);
+      } else {
+        merged.add(sentence);
+      }
+    }
+    return merged;
   }
 
   private static List<String> splitIntoSentences(String text) {
