@@ -15,7 +15,9 @@
  */
 package org.drjekyll.adocfmt.cli;
 
+import com.ibm.icu.text.CharsetDetector;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -53,7 +55,7 @@ public class AsciidocFormatterCli implements Callable<Integer> {
   @Option(
       names = {"-c", "--check"},
       description =
-          "Check if files are formatted without modifying them. Exit with 1 if any file would change.")
+          "Check if files are formatted without modifying them. Print a diff and exit with 1 if any file would change.")
   private boolean check;
 
   @Option(
@@ -261,7 +263,14 @@ public class AsciidocFormatterCli implements Callable<Integer> {
         Files.write(file, formatted);
         System.out.println("Formatted " + file);
       } else if (check) {
-        System.out.println("Would format " + file);
+        Charset charset =
+            Charset.forName(new CharsetDetector().setText(original).detect().getName());
+        System.out.print(
+            new DiffRenderer(CommandLine.Help.Ansi.AUTO.enabled())
+                .render(
+                    file.toString(),
+                    new String(original, charset),
+                    new String(formatted, charset)));
       } else {
         if (totalFiles == 1) {
           System.out.write(formatted);
