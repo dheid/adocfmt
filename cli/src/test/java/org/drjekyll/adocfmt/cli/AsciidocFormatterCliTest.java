@@ -51,6 +51,21 @@ class AsciidocFormatterCliTest {
   }
 
   @Test
+  void checkUnformattedFilePrintsDiff() throws Exception {
+    Path file = writeFile("test.adoc", UNFORMATTED);
+    ByteArrayOutputStream captured = captureStdout(() -> execute("--check", file.toString()));
+    assertThat(captured.toString(StandardCharsets.UTF_8))
+        .isEqualTo("Diff in " + file + " at line 1:\n-== title ==\n+== title\n");
+  }
+
+  @Test
+  void checkFormattedFilePrintsNothing() throws Exception {
+    Path file = writeFile("test.adoc", FORMATTED);
+    ByteArrayOutputStream captured = captureStdout(() -> execute("--check", file.toString()));
+    assertThat(captured.toString(StandardCharsets.UTF_8)).isEmpty();
+  }
+
+  @Test
   void checkFormattedFileReturnsExitCode0() throws Exception {
     Path file = writeFile("test.adoc", FORMATTED);
     assertThat(execute("--check", file.toString())).isEqualTo(0);
