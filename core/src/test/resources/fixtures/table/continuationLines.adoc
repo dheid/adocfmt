@@ -1,0 +1,8 @@
+[cols="2"]
+|===
+|Name |Description
+|First cell +
+second line +
+third line
+|Other
+|===

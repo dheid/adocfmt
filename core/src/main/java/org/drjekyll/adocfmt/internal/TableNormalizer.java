@@ -123,6 +123,12 @@ public class TableNormalizer implements Runnable {
       if (spanOrBlockPattern.matcher(line).find()) {
         return true;
       }
+      // A line without a cell (cell continuation text, preprocessor directive) would be
+      // dropped by parseTable, so leave such tables untouched.
+      String trimmed = line.trim();
+      if (!trimmed.isBlank() && !trimmed.startsWith("//") && parseCells(line).isEmpty()) {
+        return true;
+      }
     }
 
     return false;

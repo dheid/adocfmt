@@ -1,0 +1,7 @@
+[cols="2"]
+|===
+|A |B
+ifndef::backend-pdf[]
+|C |D
+endif::[]
+|===
