@@ -317,7 +317,7 @@ Usage: adocfmt [-chVw] [-cbl[=<true|false>]] [-ehlb[=<true|false>]]
 |                   Option                    | Default |                                Description                                |
 |---------------------------------------------|---------|---------------------------------------------------------------------------|
 | `-w`, `--write`                             | --      | Write formatted content back to files                                     |
-| `-c`, `--check`                             | --      | Check formatting without modifying files; exit 1 if any file would change |
+| `-c`, `--check`                             | --      | Print a diff and exit 1 if any file would change; leaves files unmodified |
 | `-nsh`, `--normalize-setext-headings`       | `true`  | Convert setext headings to ATX                                            |
 | `-cbl`, `--collapse-blank-lines`            | `true`  | Collapse consecutive blank lines                                          |
 | `-ols`, `--one-sentence-per-line`           | `true`  | One sentence per line                                                     |
@@ -360,7 +360,7 @@ adocfmt my.adoc
 # Format stdin to stdout
 cat my.adoc | adocfmt
 
-# Check formatting in CI -- exits 1 if any file would change
+# Check formatting in CI -- prints a diff and exits 1 if any file would change
 adocfmt --check docs/*.adoc
 
 # Check all .adoc files in a directory tree in CI

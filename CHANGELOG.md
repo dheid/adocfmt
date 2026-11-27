@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- `--check` now prints a diff of each change instead of only `Would format <file>`, in the style of `rustfmt --check`. Each hunk starts with `Diff in <file> at line <n>:`, followed by the removed (`-`) and added (`+`) lines with three lines of context. Removed and added lines are coloured red and green when the output is a terminal.
+
 ## [0.3.2] - 2026-10-30
 
 ### Fixed
