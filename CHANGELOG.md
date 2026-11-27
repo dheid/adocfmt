@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- One-sentence-per-line now reflows list item text the same way as paragraph text. Before, the list item line was left as is and only the lines after it were reflowed, so a wrapped item ended up half reflowed. A sentence that would start with a list marker (such as `2.`) stays on the line before. This changes the output for documents with multi-line or multi-sentence list items, so `--check` fails on those files until they are reformatted.
+
 ## [0.3.2] - 2026-10-30
 
 ### Fixed

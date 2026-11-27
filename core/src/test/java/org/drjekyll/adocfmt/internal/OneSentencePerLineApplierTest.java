@@ -136,9 +136,95 @@ and continue typing on the next line.
   }
 
   @Test
-  void doesNotTouchListItems() {
+  void splitsSentencesInListItems() {
     String input = "* First item. Still item.\n* Second item.\n";
+    assertThat(apply(input)).isEqualTo("* First item.\nStill item.\n* Second item.\n");
+  }
+
+  @Test
+  void joinsWrappedListItemText() {
+    String input =
+"""
+* First item text that is wrapped
+over two lines. The second sentence is
+wrapped too. Done.
+* Short item. Two sentences.
+""";
+    assertThat(apply(input))
+        .isEqualTo(
+"""
+* First item text that is wrapped over two lines.
+The second sentence is wrapped too.
+Done.
+* Short item.
+Two sentences.
+""");
+  }
+
+  @Test
+  void joinsWrappedOrderedListItemText() {
+    assertThat(apply(". Ordered item\nwrapped. Next one.\n"))
+        .isEqualTo(". Ordered item wrapped.\nNext one.\n");
+  }
+
+  @Test
+  void joinsNestedListItemText() {
+    assertThat(apply("** Nested item\nwrapped. Next one.\n"))
+        .isEqualTo("** Nested item wrapped.\nNext one.\n");
+  }
+
+  @Test
+  void keepsSentenceThatLooksLikeListMarkerOnPreviousLine() {
+    String input = "* Pick a version. 2. is the default.\n";
     assertThat(apply(input)).isEqualTo(input);
+  }
+
+  @Test
+  void keepsEllipsisSentenceOnPreviousLine() {
+    String input = "* Wait for it! ... and more.\n";
+    assertThat(apply(input)).isEqualTo(input);
+  }
+
+  @Test
+  void splitsListItemBeforeListContinuation() {
+    String input = "* First sentence. Second sentence.\n+\n----\ncode\n----\n";
+    assertThat(apply(input))
+        .isEqualTo("* First sentence.\nSecond sentence.\n+\n----\ncode\n----\n");
+  }
+
+  @Test
+  void listItemTextEndsAtNextListItem() {
+    assertThat(apply("* One. Two.\n- Three. Four.\n1. Five. Six.\n"))
+        .isEqualTo("* One.\nTwo.\n- Three.\nFour.\n1. Five.\nSix.\n");
+  }
+
+  @Test
+  void doesNotTouchListItemsWithHardLineBreak() {
+    String input = "* First item. Still item. +\nnext line\n";
+    assertThat(apply(input)).isEqualTo(input);
+  }
+
+  @Test
+  void doesNotTouchChecklistItems() {
+    String input = "* [x] Done. Really done.\n* [ ] Open. Still open.\n";
+    assertThat(apply(input)).isEqualTo(input);
+  }
+
+  @Test
+  void doesNotTouchThematicBreaks() {
+    String input = "* * *\nText. More.\n";
+    assertThat(apply(input)).isEqualTo("* * *\nText.\nMore.\n");
+  }
+
+  @Test
+  void keepsListItemMarkerWhitespace() {
+    assertThat(apply("*  Spaced. Two.\n")).isEqualTo("*  Spaced.\nTwo.\n");
+  }
+
+  @Test
+  void listItemReflowIsIdempotent() {
+    String once = apply("* A wrapped\nitem. Next one. 2. is it.\n. Other\nitem.\n");
+    assertThat(apply(once)).isEqualTo(once);
   }
 
   @Test

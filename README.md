@@ -18,7 +18,7 @@ The following transformations are available (default state shown):
 |----------------------------------|---------|--------------------------------------------------------------------------|
 | Normalize setext headings        | **on**  | Convert underline-style headings to ATX-style (`=` prefix)               |
 | Collapse consecutive blank lines | **on**  | Reduce runs of multiple blank lines to a single blank line               |
-| One sentence per line            | **on**  | Reflow paragraph text so each sentence starts on its own line            |
+| One sentence per line            | **on**  | Reflow paragraphs and list items so each sentence starts on its own line |
 | Normalize block delimiters       | **on**  | Shorten delimiter lines to exactly four characters (e.g. `----`)         |
 | Remove trailing header `=` signs | **on**  | Strip trailing `=` from headings (e.g. `== Title ==` → `== Title`)       |
 | Remove trailing whitespace       | **on**  | Strip trailing whitespace from every line                                |
@@ -93,7 +93,7 @@ More text.
 
 ### One Sentence Per Line
 
-Each sentence in a paragraph is placed on its own line.
+Each sentence in a paragraph or list item is placed on its own line.
 This produces minimal, meaningful diffs: editing one sentence touches exactly one line,
 and adding a sentence does not reflow the paragraph.
 
@@ -105,6 +105,20 @@ AsciiDoc is a lightweight markup language. It is used for writing documentation.
 AsciiDoc is a lightweight markup language.
 It is used for writing documentation.
 It can be converted to HTML, PDF, and other formats.
+```
+
+In a list item, the list marker stays in front of the first sentence.
+A sentence that would start with a list marker (such as `2.`) stays on the line before,
+because on its own line it would start a new list item.
+
+```asciidoc
+// Before
+* AsciiDoc is a lightweight
+markup language. It is used for writing documentation.
+
+// After
+* AsciiDoc is a lightweight markup language.
+It is used for writing documentation.
 ```
 
 Common abbreviations (e.g. `Dr.`, `etc.`, `ca.`) are recognised and do not trigger a split.

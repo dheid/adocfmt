@@ -1,0 +1,23 @@
+* First item text that is wrapped over two lines.
+The second sentence is wrapped too.
+Done.
+* Short item.
+Two sentences.
+
+Next case.
+
+. Ordered item wrapped.
+Next one.
+
+Next case.
+
+* Pick a version. 2. is the default.
+
+Next case.
+
+* First sentence.
+Second sentence.
++
+----
+code
+----
